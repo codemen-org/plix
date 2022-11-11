@@ -8,3 +8,12 @@ class ProductIdProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class ProductPriceProvider extends ChangeNotifier {
+  double _price = 0.0;
+  double get price => _price;
+  changePrice(double price) {
+    _price = price;
+    notifyListeners();
+  }
+}

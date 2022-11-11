@@ -39,7 +39,7 @@ class _CategorySearchState extends State<CategorySearch>
               catList = data['data']['foods']['data'];
               serachList = data['data']['foods']['data'];
 
-              Future.delayed(Duration(seconds: 3)).then(
+              Future.delayed(Duration(seconds: 0)).then(
                 (value) {
                   super.setState(() {
                     super.stVal = false;
@@ -57,7 +57,7 @@ class _CategorySearchState extends State<CategorySearch>
             setState(() {
               catList = data['data']['categories']['data'];
               serachList = data['data']['categories']['data'];
-              Future.delayed(Duration(seconds: 3)).then(
+              Future.delayed(Duration(seconds: 0)).then(
                 (value) {
                   super.setState(() {
                     super.stVal = false;
@@ -75,7 +75,7 @@ class _CategorySearchState extends State<CategorySearch>
             setState(() {
               catList = data['data']['foods'];
               serachList = data['data']['foods'];
-              Future.delayed(Duration(seconds: 3)).then(
+              Future.delayed(Duration(seconds: 0)).then(
                 (value) {
                   super.setState(() {
                     super.stVal = false;
@@ -125,50 +125,52 @@ class _CategorySearchState extends State<CategorySearch>
         centerTitle: true,
         title: widget.allCategories ? Text("Categories") : Text(widget.catname),
       ),
-      body: Column(children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            height: .07.sh,
-            child: TextFormField(
-              controller: searchEditingController,
-              decoration: InputDecoration(
-                hintStyle: TextFontStyle.headline7StyleInter
-                    .copyWith(color: AppColors.appColor9B9B9B),
-                hintText: "Search Product",
-                prefixIcon: Icon(Icons.search, color: AppColors.appColor9B9B9B),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0.r),
-                  borderSide: const BorderSide(
-                    color: AppColors.disabledColor,
-                    width: 1,
+      body: SingleChildScrollView(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: .07.sh,
+              child: TextFormField(
+                controller: searchEditingController,
+                decoration: InputDecoration(
+                  hintStyle: TextFontStyle.headline7StyleInter
+                      .copyWith(color: AppColors.appColor9B9B9B),
+                  hintText: "Search Product",
+                  prefixIcon:
+                      Icon(Icons.search, color: AppColors.appColor9B9B9B),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0.r),
+                    borderSide: const BorderSide(
+                      color: AppColors.disabledColor,
+                      width: 1,
+                    ),
                   ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0.r),
-                  borderSide: const BorderSide(
-                    color: AppColors.disabledColor,
-                    width: 1,
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0.r),
+                    borderSide: const BorderSide(
+                      color: AppColors.disabledColor,
+                      width: 1,
+                    ),
                   ),
-                ),
-                disabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0.r),
-                  borderSide: const BorderSide(
-                    color: AppColors.borderColor,
-                    width: 1,
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0.r),
+                    borderSide: const BorderSide(
+                      color: AppColors.borderColor,
+                      width: 1,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-        UIHelper.verticalSpaceSmall,
-        super.stVal
-            ? super.build(context)
-            : SingleChildScrollView(
-                child: Container(
+          UIHelper.verticalSpaceSmall,
+          super.stVal
+              ? super.build(context)
+              : Container(
                   height: .7.sh,
                   child: LiveList(
+                    physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     padding: EdgeInsets.only(bottom: 100),
                     itemCount: catList.length,
@@ -177,7 +179,7 @@ class _CategorySearchState extends State<CategorySearch>
                     itemBuilder: animationItemBuilder(
                       (index) {
                         return InkWell(
-                          onTap: () {
+                          onTap: () async {
                             if (widget.allCategories) {
                               getProductsByCategoriesRXObj
                                   .fetchItemByShopCategoryData(
@@ -190,7 +192,7 @@ class _CategorySearchState extends State<CategorySearch>
                                 },
                               );
                             } else {
-                              getProductDetailRXObj
+                              await getProductDetailRXObj
                                   .fetchProductDetail(catList[index]["slug"]);
                               NavigationService.navigateTo(
                                   Routes.productDetailScreen);
@@ -219,9 +221,9 @@ class _CategorySearchState extends State<CategorySearch>
                       },
                     ),
                   ),
-                ),
-              )
-      ]),
+                )
+        ]),
+      ),
     );
   }
 }

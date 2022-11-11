@@ -1,11 +1,16 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:lottie/lottie.dart';
+import 'package:plix/features/product/model/add_one_list.dart';
 import 'package:plix/helpers/ui_helpers.dart';
 import 'package:plix/networks/api_acess.dart';
+import 'package:plix/provider/product_id_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constants/app_color.dart';
 import '../../../constants/app_constants.dart';
@@ -20,44 +25,119 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  bool checkbox = true;
+  bool checkbox = false;
   String radioValue = "";
   bool validation = false;
-  List<int> selectedAddOns = [];
+  double itemPrice = 0.0;
+  double totalPrice = 0.0;
+  AddOneList selectedAddOns = AddOneList(addons: []);
+  //cart variable
+  int foodId = 0;
+  int food_option_id = 0;
+  int itemQty = 1;
   TextEditingController noteController = TextEditingController();
+  List<int> addOneList = [];
+
+  void calculateTotal() {
+    totalPrice = itemPrice;
+    selectedAddOns.addons.forEach(
+      (element) {
+        totalPrice += double.parse(element.price!);
+      },
+    );
+    context.read<ProductPriceProvider>().changePrice(totalPrice);
+  }
+
+  bool alreadySelected(int id) {
+    bool exist = false;
+    final addOne = selectedAddOns.addons
+        .singleWhere((element) => element.id == id, orElse: () {
+      return Addon();
+    });
+    if (addOne.id != null) {
+      exist = true;
+    }
+    return exist;
+  }
+
+  addRemovecart(Addon addon) {
+    final ind =
+        selectedAddOns.addons.indexWhere((element) => element.id == addon.id);
+    if (ind >= 0) {
+      selectedAddOns.addons.removeAt(ind);
+    } else {
+      selectedAddOns.addons.add(addon);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: StreamBuilder(
-            stream: getProductDetailRXObj.getProductDetailData,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                Map foodData = snapshot.data['data']["food"];
-                List options = snapshot.data['data']["food"]["options"];
-                List addOns = snapshot.data['data']["food"]["addons"];
-                return Column(
+      body: StreamBuilder(
+          stream: getProductDetailRXObj.getProductDetailData,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Map foodData = snapshot.data['data']["food"];
+              List options = snapshot.data['data']["food"]["options"];
+              AddOneList addOns = AddOneList(addons: []);
+              List<dynamic> addone = snapshot.data['data']["food"]["addons"];
+              addone.forEach(
+                (element) {
+                  addOns.addons.add(Addon.fromJson(element));
+                },
+              );
+              foodId = foodData["id"];
+              if (itemPrice == 0.0) {
+                itemPrice = double.parse(foodData["price"]);
+                Future.delayed(Duration.zero).then(
+                  (value) => calculateTotal(),
+                );
+              }
+
+              return SingleChildScrollView(
+                child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Stack(children: [
-                        Image.network(
-                          foodData["image_full_path"] ?? "",
-                          height: .38.sh,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                        Positioned(
-                            top: 10,
-                            left: 10,
-                            child: InkWell(
-                              child:
-                                  Icon(Icons.arrow_back, color: Colors.white),
-                              onTap: () {
-                                NavigationService.goBack;
-                              },
-                            )),
-                      ]),
+                      Container(
+                        height: .38.sh,
+                        width: 1.sw,
+                        child: Stack(children: [
+                          Positioned(
+                            child: Image.network(
+                              foodData["image_full_path"] ?? "",
+                              height: .38.sh,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                              top: 10,
+                              left: 10,
+                              child: InkWell(
+                                child:
+                                    Icon(Icons.arrow_back, color: Colors.white),
+                                onTap: () {
+                                  NavigationService.goBack;
+                                },
+                              )),
+                        ]),
+                      ),
                       UIHelper.verticalSpaceSmall,
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10.r),
@@ -85,6 +165,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           if (radioValue == "" &&
                               options[index]["is_default"] == 1) {
                             radioValue = options[index]["name"];
+                            food_option_id = options[index]["id"];
                           }
                           return RadioListTile(
                             secondary: Text(options[index]["price_in_euro"]),
@@ -102,10 +183,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             selected: radioValue == options[index]["name"],
                             groupValue: radioValue,
                             onChanged: (value) {
+                              itemPrice = double.parse(options[index]["price"]);
+                              food_option_id = options[index]["id"];
+                              calculateTotal();
                               setState(() {
                                 radioValue = value as String;
+                                radioValue = options[index]["name"];
+
+                                log(radioValue);
                               });
-                              log(radioValue);
                             },
                           );
                         },
@@ -122,61 +208,32 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: addOns.length,
+                        itemCount: addOns.addons.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            trailing: Text(addOns[index]["price_in_euro"]),
+                            trailing: Text(addOns.addons[index].priceInEuro!),
                             leading: Checkbox(
-                              value:
-                                  selectedAddOns.contains(addOns[index]["id"]),
+                              value: alreadySelected(addOns.addons[index].id!),
                               onChanged: (value) {
                                 setState(() {
-                                  if (selectedAddOns
-                                      .contains(addOns[index]["id"]))
-                                    selectedAddOns.remove(addOns[index]["id"]);
-                                  else
-                                    selectedAddOns.add(addOns[index]["id"]);
-                                  // calculateTotal();
-                                });
-                                setState(() {
-                                  checkbox = value!;
+                                  addRemovecart(addOns.addons[index]);
+                                  calculateTotal();
                                 });
                               },
                             ),
                             title: Text(
-                              addOns[index]["name"],
+                              addOns.addons[index].name!,
                               style: TextFontStyle.headline5StyleInter
                                   .copyWith(color: AppColors.appColor2C303E),
                             ),
                             subtitle: Text(
-                              addOns[index]["description"],
+                              addOns.addons[index].description!,
                               style: TextFontStyle.headline7StyleInter
                                   .copyWith(color: AppColors.appColor9B9B9B),
                             ),
                           );
                         },
                       ),
-                      // ListTile(
-                      //   leading: Checkbox(
-                      //     value: checkbox,
-                      //     onChanged: (value) {
-                      //       setState(() {
-                      //         checkbox = value!;
-                      //       });
-                      //     },
-                      //   ),
-                      //   title: Text(
-                      //     "Azeitonas",
-                      //     style: TextFontStyle.headline5StyleInter
-                      //         .copyWith(color: AppColors.appColor2C303E),
-                      //   ),
-                      //   subtitle: Text(
-                      //     "Detalhes",
-                      //     style: TextFontStyle.headline7StyleInter
-                      //         .copyWith(color: AppColors.appColor9B9B9B),
-                      //   ),
-                      // ),
-
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10.r),
                         child: TextFormField(
@@ -185,7 +242,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               : AutovalidateMode.disabled,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter email';
+                              return 'Enter notes';
                             }
                             return null;
                           },
@@ -230,20 +287,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   color: AppColors.appColor9B9B9B,
                                 ),
                                 onTap: () {
-                                  // if (_page >= 2) {
-                                  //   setState(() {
-                                  //     _page -= 1;
-                                  //     int record = int.parse(
-                                  //         numberController.value.text);
-                                  //     getItemListRXobj.fetchItemListData(
-                                  //         record: record, page: _page);
-                                  //   });
-                                  // }
+                                  if (itemQty >= 2) {
+                                    setState(() {
+                                      itemQty -= 1;
+                                    });
+                                  }
                                 },
                               ),
                               UIHelper.horizontalSpaceSmall,
                               Text(
-                                '1',
+                                (itemQty).toString(),
                                 style: TextFontStyle.headline5StyleInter
                                     .copyWith(color: AppColors.appColor000000),
                               ),
@@ -255,72 +308,80 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   color: AppColors.inactiveColor,
                                 ),
                                 onTap: () {
-                                  // int record =
-                                  //     int.parse(numberController.value.text);
-                                  // if (items.length == record) {
-                                  //   setState(() {
-                                  //     _page += 1;
-                                  //     getItemListRXobj.fetchItemListData(
-                                  //         record: record, page: _page);
-                                  //   });
-                                  // } else {
-                                  //   const snackBar = SnackBar(
-                                  //     content: Text('No more records to show'),
-                                  //   );
-                                  //   ScaffoldMessenger.of(context)
-                                  //       .showSnackBar(snackBar);
-                                  // }
+                                  setState(() {
+                                    itemQty += 1;
+                                  });
                                 },
                               ),
                             ]),
                       ),
-                      UIHelper.verticalSpaceMedium,
-                      Container(
-                        color: AppColors.primaryColor,
-                        height: .10.sh,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text.rich(TextSpan(children: [
-                                  TextSpan(
-                                      text: 'Total Price\n',
-                                      style: TextFontStyle.headline4StyleArial),
-                                  TextSpan(
-                                      text: '19,00€',
-                                      style: TextFontStyle.headline2StyleArial),
-                                ])),
-                                Container(
-                                  height: .05.sh,
-                                  width: .3.sw,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.inactiveColor,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Center(
-                                      child: Text(
-                                    "Adicionar",
-                                    style: TextFontStyle.headline4StyleInter
-                                        .copyWith(
-                                            color: AppColors.appColor4D3E39),
-                                  )),
-                                )
-                              ]),
-                        ),
-                      )
-                    ]);
-              } else if (snapshot.hasError) {
-                return SizedBox.shrink();
-              }
-              return Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Lottie.asset(AssetIcons.lottie_food_loading),
-                ),
+                      UIHelper.verticalSpaceExtraLarge,
+                    ]),
               );
-            }),
+            } else if (snapshot.hasError) {
+              return SizedBox.shrink();
+            }
+            return Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Lottie.asset(AssetIcons.lottie_food_loading),
+              ),
+            );
+          }),
+      bottomSheet: Container(
+        color: AppColors.primaryColor,
+        height: .10.sh,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text.rich(TextSpan(children: [
+                  TextSpan(
+                      text: 'Total Price\n',
+                      style: TextFontStyle.headline4StyleArial),
+                  TextSpan(
+                      text: (context.watch<ProductPriceProvider>().price *
+                                  itemQty)
+                              .toString() +
+                          ' €',
+                      style: TextFontStyle.headline2StyleArial),
+                ])),
+                InkWell(
+                  onTap: () async {
+                    addOneList = [];
+                    selectedAddOns.addons.forEach(
+                      (element) {
+                        addOneList.add(element.id!);
+                      },
+                    );
+                    await postCartRXObj.postCartData(
+                      foodId.toString(),
+                      food_option_id.toString(),
+                      itemQty.toString(),
+                      noteController.text,
+                      addOneList.toString(),
+                    );
+                    NavigationService.goBack;
+                  },
+                  child: Container(
+                    height: .05.sh,
+                    width: .3.sw,
+                    decoration: BoxDecoration(
+                      color: AppColors.inactiveColor,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Center(
+                        child: Text(
+                      "Adicionar",
+                      style: TextFontStyle.headline4StyleInter
+                          .copyWith(color: AppColors.appColor4D3E39),
+                    )),
+                  ),
+                )
+              ]),
+        ),
       ),
     );
   }

@@ -1,11 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import 'package:plix/constants/text_font_style.dart';
 import 'package:plix/helpers/ui_helpers.dart';
 import 'package:plix/helpers/all_routes.dart';
 import 'package:plix/helpers/navigation_service.dart';
+import 'package:plix/networks/api_acess.dart';
 
 import '../../constants/app_color.dart';
+import '../../constants/app_constants.dart';
 import '../../widgets/custom_button.dart';
 
 class OrderScreen extends StatefulWidget {
@@ -17,11 +21,19 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getCartRX.getCartData();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
-          height: .9.sh,
+          height: 1.sh,
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             UIHelper.verticalSpaceMedium,
@@ -84,51 +96,84 @@ class _OrderScreenState extends State<OrderScreen> {
                       .copyWith(color: AppColors.appColor9B9B9B)),
             ),
             UIHelper.verticalSpaceMedium,
-            Container(
-              width: double.infinity,
-              height: 50.h,
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 13.w),
-              decoration: BoxDecoration(color: Colors.white),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Nome do Menu',
-                        style: TextFontStyle.headline5StyleInter
-                            .copyWith(color: AppColors.appColor2C303E),
+            StreamBuilder(
+                stream: getCartRX.getCartDataRes,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    Map data = snapshot.data["data"];
+                    List carts = data["carts"];
+                    return Container(
+                      width: double.infinity,
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 13.w),
+                      decoration: BoxDecoration(color: Colors.white),
+                      child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: carts.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      carts[index]["food"]["name"],
+                                      style: TextFontStyle.headline5StyleInter
+                                          .copyWith(
+                                              color: AppColors.appColor2C303E),
+                                    ),
+                                    Text(
+                                      carts[index]["food"]["description"],
+                                      style: TextFontStyle.headline7StyleInter
+                                          .copyWith(
+                                              color: AppColors.appColor67605F),
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Text(
+                                    carts[index]["quantity"].toString() +
+                                        ' Unidade',
+                                    style: TextFontStyle.headline3StyleArial
+                                        .copyWith(
+                                            color: AppColors.appColor2C303E),
+                                  ),
+                                ),
+                                Spacer(),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Text(
+                                    carts[index]["food"]["price_in_euro"],
+                                    style: TextFontStyle.headline7StyleInter
+                                        .copyWith(
+                                            color: AppColors.appColor2C303E),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                      Text(
-                        'Detalhes',
-                        style: TextFontStyle.headline7StyleInter
-                            .copyWith(color: AppColors.appColor67605F),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Expanded(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Lottie.asset(AssetIcons.lottie_food_loading),
                       ),
-                    ],
-                  ),
-                  Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text(
-                      '1 Unidade',
-                      style: TextFontStyle.headline3StyleArial
-                          .copyWith(color: AppColors.appColor2C303E),
-                    ),
-                  ),
-                  Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text(
-                      '15,00 €',
-                      style: TextFontStyle.headline7StyleInter
-                          .copyWith(color: AppColors.appColor2C303E),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                    );
+                  }
+                  return SizedBox.shrink();
+                }),
             UIHelper.verticalSpaceSmall,
             ListTile(
                 tileColor: Colors.white,

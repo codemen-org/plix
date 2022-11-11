@@ -10,25 +10,22 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          decoration: const BoxDecoration(color: AppColors.appColorEDBB43),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 40.h,
-                ),
-                SvgPicture.asset(AssetIcons.splash,
-                    color: AppColors.appColor2C303E),
-                SizedBox(
-                  height: 20.h,
-                ),
-              ]),
-        ),
+    return Scaffold(
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: const BoxDecoration(color: AppColors.appColorEDBB43),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: 40.h,
+              ),
+              Image.asset(AssetIcons.splash),
+              SizedBox(
+                height: 20.h,
+              ),
+            ]),
       ),
     );
   }

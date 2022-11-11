@@ -21,6 +21,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  TextEditingController telePhoneEditingController = TextEditingController();
+  TextEditingController emailPhoneEditingController = TextEditingController();
+  TextEditingController passwordEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,12 +93,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           UIHelper.verticalSpaceSmall,
-          action_widget(title: "Telefone\n", subTitle: "+351 000 000 000"),
+          InkWell(
+              child: action_widget(
+                  title: "Telefone\n", subTitle: "+351 000 000 000"),
+              onTap: () {
+                dialog_widget(context, "Telefone", telePhoneEditingController);
+              }),
           InkWell(
               child:
                   action_widget(title: "Email\n", subTitle: "email@gmail.com"),
               onTap: () {
-                dialog_widget(context);
+                dialog_widget(context, "Email", emailPhoneEditingController);
               }),
           UIHelper.verticalSpaceMedium,
           Padding(
@@ -107,20 +115,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           UIHelper.verticalSpaceSmall,
-          action_widget(title: "Password\n", subTitle: "*******"),
+          InkWell(
+            child: action_widget(title: "Password\n", subTitle: "*******"),
+            onTap: () {
+              dialog_widget(context, "Password", passwordEditingController);
+            },
+          ),
           UIHelper.verticalSpaceLarge,
         ]),
       ),
     );
   }
 
-  Future<dynamic> dialog_widget(BuildContext context) {
+  Future<dynamic> dialog_widget(
+      BuildContext context, String title, TextEditingController controller) {
     return showDialog(
       barrierColor: Colors.transparent,
       context: context,
       builder: (context) {
         return Center(
             child: Container(
+          margin: MediaQuery.of(context).viewInsets,
           color: AppColors.appColor4D3E39,
           height: .25.sh,
           width: .55.sw,
@@ -129,12 +144,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               UIHelper.verticalSpaceSmall,
-              Text('Email', style: TextFontStyle.headline3StyleInter),
+              Text(title, style: TextFontStyle.headline3StyleInter),
               UIHelper.verticalSpaceSmall,
               SizedBox(
                   height: .05.sh,
                   width: .50.sw,
-                  child: Material(child: TextFormField())),
+                  child: Material(
+                      child: TextFormField(
+                    controller: controller,
+                  ))),
               UIHelper.verticalSpaceSmall,
               Row(
                 children: [

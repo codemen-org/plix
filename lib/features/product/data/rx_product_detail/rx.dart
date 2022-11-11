@@ -9,8 +9,11 @@
 // import '../../screens/contestar_submit_screen.dart';
 // import 'api.dart';
 
+import 'package:flutter/material.dart';
+import 'package:plix/widgets/loading_indicators.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../../../helpers/navigation_service.dart';
 import 'api.dart';
 
 class GetProductDetailRX {
@@ -22,10 +25,16 @@ class GetProductDetailRX {
 
   Future<void> fetchProductDetail(String slug) async {
     try {
+      showDialog(
+        context: NavigationService.context,
+        builder: (context) => loadingIndicatorCircle(context: context),
+      );
       Map data = await api.getProductDetail(slug);
       _dataFetcher.sink.add(data);
+      NavigationService.goBack;
     } catch (e) {
       _dataFetcher.sink.addError(e);
+      NavigationService.goBack;
     }
   }
 

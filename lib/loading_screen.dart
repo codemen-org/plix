@@ -36,6 +36,7 @@ class _LoadingState extends State<Loading> {
       await getSliderRXObj.fetchSlider();
       await getShopCategoriRXObj.fetchShopCategoryData();
       await getShopItemRXObj.fetchShopItemData();
+      await getCartRX.getCartData();
 
 //this should be called after shop api is called
       // String restaurantId = appData.read(kKeyShopID) ?? '';

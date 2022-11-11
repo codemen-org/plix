@@ -41,6 +41,7 @@ class GetLoginRX {
       String lastName = data['data']['user']['last_name'];
       String id = data['data']['user']['id'].toString();
       String user = data['data']['user']['email'];
+      int restaurantID = data['data']['restaurant']['id'];
 
       storage.write(kKeyIsLoggedIn, true);
       storage.write(kKeyAccessToken, accesstoken);
@@ -49,6 +50,7 @@ class GetLoginRX {
       storage.write(kKeyLastName, lastName);
       storage.write(kKeyUserID, id);
       storage.write(kKeyUser, user);
+      storage.write(kKeyRestaurantID, restaurantID);
 
       DioSingleton.instance.update(accesstoken);
       //LocalNotificationService.getToken();

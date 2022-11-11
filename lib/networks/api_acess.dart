@@ -3,10 +3,12 @@ import '../features/authentication/data/rx_email/rx.dart';
 import '../features/authentication/data/rx_forget_pw/rx.dart';
 import '../features/authentication/data/rx_login/rx.dart';
 import '../features/authentication/data/signup/rx.dart';
+import '../features/cart/rx_get_cart/rx.dart';
 import '../features/categories/data/rx_categories/rx.dart';
 import '../features/categories/data/rx_categoryItem/rx.dart';
 import '../features/dashboard/data/rx_items/rx.dart';
 import '../features/dashboard/data/rx_slider/rx.dart';
+import '../features/product/data/rx_add_cart/rx.dart';
 import '../features/product/data/rx_product_detail/rx.dart';
 
 GetSignUpRX getSignUpRXObj = GetSignUpRX();
@@ -20,3 +22,5 @@ GetProductsByCategoriesRX getProductsByCategoriesRXObj =
 PostForgetEmailRX postForgetEmailRXObj = PostForgetEmailRX();
 PostForgertPwRX postForgertPwRXObj = PostForgertPwRX();
 GetProductDetailRX getProductDetailRXObj = GetProductDetailRX();
+PostCartRX postCartRXObj = PostCartRX();
+GetCartRX getCartRX = GetCartRX();

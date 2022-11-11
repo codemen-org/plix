@@ -2,9 +2,9 @@
 //live url
 //const String url = "";
 //test local
-const String url = "http://e8ea-118-179-44-20.ngrok.io";
+//const String url = "http://2081-118-179-44-20.ngrok.io";
 //staging
-//const String url = "https://applix.squaredsys.com";
+const String url = "https://applix.squaredsys.com";
 
 class NetworkConstants {
   static const ACCEPT = "Accept";
@@ -31,9 +31,9 @@ class Endpoints {
   static String getProductDetail(String slug) => "/api/products/$slug";
   static String getAllProductsByCategory(String slug) =>
       "/api/product-categories/$slug/products";
+  static String postCart() => "/api/carts";
 
   static String getDashBoard() => "/api/shop-dashboard";
-  static String getShop() => "/api/shop-show";
   static String getShopList() => "/api/shop-list";
   static String getDeliveryBoyList() => "/api/delivery-men";
   static String getShopDeliveryBoyList() => "/api/shop-delivery-men";

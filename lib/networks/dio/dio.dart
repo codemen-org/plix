@@ -13,6 +13,20 @@ class DioSingleton {
 
   late Dio dio;
 
+  void create() {
+    BaseOptions options = BaseOptions(
+        baseUrl: url,
+        connectTimeout: 100000,
+        receiveTimeout: 100000,
+        headers: {
+          NetworkConstants.ACCEPT: NetworkConstants.ACCEPT_TYPE,
+          NetworkConstants.ACCEPT_LANGUAGE:
+              NetworkConstants.ACCEPT_LANGUAGE_VALUE,
+          NetworkConstants.APP_KEY: NetworkConstants.APP_KEY_VALUE,
+        });
+    dio = Dio(options)..interceptors.add(Logger());
+  }
+
   void update(String auth) {
     if (kDebugMode) {
       print("Dio update");
@@ -31,20 +45,6 @@ class DioSingleton {
       receiveTimeout: 100000,
     );
     dio.options = options;
-  }
-
-  void create() {
-    BaseOptions options = BaseOptions(
-        baseUrl: url,
-        connectTimeout: 100000,
-        receiveTimeout: 100000,
-        headers: {
-          NetworkConstants.ACCEPT: NetworkConstants.ACCEPT_TYPE,
-          NetworkConstants.ACCEPT_LANGUAGE:
-              NetworkConstants.ACCEPT_LANGUAGE_VALUE,
-          NetworkConstants.APP_KEY: NetworkConstants.APP_KEY_VALUE,
-        });
-    dio = Dio(options)..interceptors.add(Logger());
   }
 }
 

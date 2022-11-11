@@ -126,6 +126,7 @@ const String kKeyShopID = 'shop_id';
 const String kKeycategoriesID = 'categoriesId';
 const String kKeyproductID = 'productId';
 const String kKeyShopSlug = 'shop_slug';
+const String kKeyRestaurantID = 'productId';
 //order statuses
 
 const List<String> kLanguagesKey = [

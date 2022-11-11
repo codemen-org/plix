@@ -1,9 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:plix/constants/app_color.dart';
 import 'package:plix/features/dashboard/presentation/home_screen.dart';
 import 'package:plix/features/address/presentation/address_screen.dart';
 import 'package:plix/features/authentication/presentation/login/login_screen.dart';
@@ -22,6 +24,7 @@ import 'helpers/navigation_service.dart';
 import 'helpers/notification_service.dart';
 import 'navigation_screen.dart';
 import 'provider/catpopup_status.dart';
+import 'provider/product_id_provider.dart';
 import 'provider/sub_category.dart';
 import 'features/categories/presentation/category_search_screen.dart';
 import 'loading_screen.dart';
@@ -36,6 +39,10 @@ void main() async {
 
   await GetStorage.init();
   DioSingleton.instance.create();
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.black,
+    statusBarColor: AppColors.appColor4D3E39,
+  ));
   //await Firebase.initializeApp();
   // FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   // LocalNotificationService.initialize();
@@ -52,8 +59,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<EmailProvider>(
             create: ((context) => EmailProvider())),
-        ChangeNotifierProvider<SubCategory>(
-          create: ((context) => SubCategory()),
+        ChangeNotifierProvider<ProductPriceProvider>(
+          create: ((context) => ProductPriceProvider()),
         )
       ],
       child: LayoutBuilder(

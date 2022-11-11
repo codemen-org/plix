@@ -22,8 +22,8 @@ class ItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //final body = json.decode(Item?.name.toString());
     return GestureDetector(
-      onTap: () {
-        getProductDetailRXObj.fetchProductDetail(item["slug"]);
+      onTap: () async {
+        await getProductDetailRXObj.fetchProductDetail(item["slug"]);
         NavigationService.navigateTo(Routes.productDetailScreen);
       },
       child: Container(
