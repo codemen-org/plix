@@ -44,6 +44,9 @@ dependencies:
   shimmer: ^2.0.0
   webview_flutter: ^3.0.4
   lottie: ^1.4.3
+  geocoding: ^2.0.5
+  flutter_slidable: ^2.0.0
+  badges: ^2.0.3
   # new
   cupertino_icons: ^1.0.2
   flutter_screenutil: ^5.5.3+2
@@ -64,7 +67,6 @@ dependencies:
   font_awesome_flutter: ^10.1.0
   flutter_svg_provider:
   http: ^0.13.4
-  geocoding: ^2.0.4
   intl: ^0.17.0
   firebase_core: ^1.12.0
   firebase_messaging: ^13.0.0

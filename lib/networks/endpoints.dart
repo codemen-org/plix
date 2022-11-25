@@ -2,7 +2,7 @@
 //live url
 //const String url = "";
 //test local
-//const String url = "http://2081-118-179-44-20.ngrok.io";
+//const String url = "http://2961-118-179-44-20.ngrok.io";
 //staging
 const String url = "https://applix.squaredsys.com";
 
@@ -16,6 +16,11 @@ class NetworkConstants {
   static const ACCEPT_TYPE = "application/json";
   static const AUTHORIZATION = "Authorization";
   static const CONTENT_TYPE = "content-Type";
+}
+
+class PaymentGateway {
+  static String gateway(String orderId) =>
+      "https://demo.vivapayments.com/web/checkout?ref={$orderId}";
 }
 
 class Endpoints {
@@ -32,6 +37,12 @@ class Endpoints {
   static String getAllProductsByCategory(String slug) =>
       "/api/product-categories/$slug/products";
   static String postCart() => "/api/carts";
+  static String postSaveAddress() => "/api/save-delivery-address";
+  static String getDeliveryAddress() => "/api/delivery-addresses";
+  static String getTimeSlot() => "/api/time-slots";
+  static String getProfleData() => "/api/profile";
+  static String postUpdatePhone() => "/api/update-profile";
+  static String postCreateOrder() => "/api/orders";
 
   static String getDashBoard() => "/api/shop-dashboard";
   static String getShopList() => "/api/shop-list";

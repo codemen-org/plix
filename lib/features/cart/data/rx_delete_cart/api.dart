@@ -6,25 +6,9 @@ import 'package:flutter/foundation.dart';
 import '../../../../networks/dio/dio.dart';
 import '/networks/endpoints.dart';
 
-class PostCartApi {
-  Future<Map> postCart(
-    String restaurantId,
-    String foodId,
-    String optionId,
-    String quantity,
-    String specialReq,
-    List<int> data,
-  ) async {
-    String foodAddOnID =
-        data.toString().replaceAll("[", "").replaceAll("]", "");
-    FormData formData = FormData.fromMap({
-      'restaurant_id': restaurantId,
-      'restaurant_food_id': foodId,
-      'food_option_id': optionId,
-      'quantity': quantity,
-      'special_request': specialReq,
-      'food_addon_id': foodAddOnID
-    });
+class PostDeleteCartApi {
+  Future<Map> postCart(String code) async {
+    FormData formData = FormData.fromMap({'code': code, '_method': 'DELETE'});
 
     log(formData.fields.toString());
 

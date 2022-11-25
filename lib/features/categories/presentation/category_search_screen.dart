@@ -5,6 +5,7 @@ import 'package:plix/features/categories/presentation/shimmer.dart';
 import 'package:plix/helpers/all_routes.dart';
 import 'package:plix/helpers/navigation_service.dart';
 import 'package:plix/navigation_screen.dart';
+import 'package:plix/widgets/loading_indicators.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '/constants/app_color.dart';
@@ -22,8 +23,8 @@ class CategorySearch extends StatefulWidget {
   State<CategorySearch> createState() => _CategorySearchState();
 }
 
-class _CategorySearchState extends State<CategorySearch>
-    with ShimmerStatefulModeMixin<CategorySearch> {
+class _CategorySearchState extends State<CategorySearch> {
+  bool isLoading = true;
   List<dynamic> catList = [];
   List<dynamic> serachList = [];
   TextEditingController searchEditingController = TextEditingController();
@@ -38,14 +39,7 @@ class _CategorySearchState extends State<CategorySearch>
             setState(() {
               catList = data['data']['foods']['data'];
               serachList = data['data']['foods']['data'];
-
-              Future.delayed(Duration(seconds: 0)).then(
-                (value) {
-                  super.setState(() {
-                    super.stVal = false;
-                  });
-                },
-              );
+              isLoading = false;
             });
           }
         },
@@ -57,13 +51,7 @@ class _CategorySearchState extends State<CategorySearch>
             setState(() {
               catList = data['data']['categories']['data'];
               serachList = data['data']['categories']['data'];
-              Future.delayed(Duration(seconds: 0)).then(
-                (value) {
-                  super.setState(() {
-                    super.stVal = false;
-                  });
-                },
-              );
+              isLoading = false;
             });
           }
         },
@@ -75,13 +63,7 @@ class _CategorySearchState extends State<CategorySearch>
             setState(() {
               catList = data['data']['foods'];
               serachList = data['data']['foods'];
-              Future.delayed(Duration(seconds: 0)).then(
-                (value) {
-                  super.setState(() {
-                    super.stVal = false;
-                  });
-                },
-              );
+              isLoading = false;
             });
           }
         },
@@ -165,12 +147,11 @@ class _CategorySearchState extends State<CategorySearch>
             ),
           ),
           UIHelper.verticalSpaceSmall,
-          super.stVal
-              ? super.build(context)
+          isLoading
+              ? loadingIndicatorCircle(context: context)
               : Container(
                   height: .7.sh,
                   child: LiveList(
-                    physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     padding: EdgeInsets.only(bottom: 100),
                     itemCount: catList.length,

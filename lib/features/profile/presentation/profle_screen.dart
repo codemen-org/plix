@@ -9,8 +9,10 @@ import 'package:plix/helpers/all_routes.dart';
 import 'package:plix/helpers/navigation_service.dart';
 import 'package:plix/navigation_screen.dart';
 import 'package:plix/widgets/custom_button.dart';
+import 'package:plix/widgets/loading_indicators.dart';
 
 import '../../../constants/app_color.dart';
+import '../../../networks/api_acess.dart';
 import '../../../widgets/lebel_text_button.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -56,11 +58,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           UIHelper.verticalSpaceSmall,
-          action_widget(
-            title: 'Morada Casa\n',
-            subTitle: 'Detalhes da Morada de Casa',
-          ),
-          UIHelper.verticalSpaceSmall,
+          StreamBuilder(
+              stream: getAddressRXObj.getCartDataRes,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List address = snapshot.data["data"]["addresses"];
+                  if (address.length != -1) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: address.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          color: Colors.white,
+                          child: ListTile(
+                            isThreeLine: true,
+                            leading: Icon(
+                              address[index]["is_default"] != 1
+                                  ? Icons.check_circle
+                                  : Icons.radio_button_unchecked,
+                              color: AppColors.appColor000000,
+                            ),
+                            title: Text(address[index]["address_name"],
+                                style: TextFontStyle.headline5StyleInter
+                                    .copyWith(color: AppColors.appColor2C303E)),
+                            subtitle: Text(
+                              address[index]["address"],
+                              style: TextFontStyle.headline7StyleInter
+                                  .copyWith(color: AppColors.appColor67605F),
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_forward_sharp,
+                              color: AppColors.inactiveColor,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                } else if (snapshot.hasError) {
+                  return loadingIndicatorCircle(context: context);
+                }
+                return SizedBox.shrink();
+              }),
+          // UIHelper.verticalSpaceSmall,
           InkWell(
             onTap: () {
               NavigationService.navigateTo(Routes.addressScreen);
@@ -83,52 +125,82 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
           ),
-          UIHelper.verticalSpaceSmall,
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 13.w),
-            child: Text(
-              "Contacto",
-              style: TextFontStyle.headline7StyleInter
-                  .copyWith(color: AppColors.appColor9B9B9B),
-            ),
-          ),
-          UIHelper.verticalSpaceSmall,
-          InkWell(
-              child: action_widget(
-                  title: "Telefone\n", subTitle: "+351 000 000 000"),
-              onTap: () {
-                dialog_widget(context, "Telefone", telePhoneEditingController);
-              }),
-          InkWell(
-              child:
-                  action_widget(title: "Email\n", subTitle: "email@gmail.com"),
-              onTap: () {
-                dialog_widget(context, "Email", emailPhoneEditingController);
-              }),
-          UIHelper.verticalSpaceMedium,
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 13.w),
-            child: Text(
-              "Dados Privados",
-              style: TextFontStyle.headline7StyleInter
-                  .copyWith(color: AppColors.appColor9B9B9B),
-            ),
-          ),
-          UIHelper.verticalSpaceSmall,
-          InkWell(
-            child: action_widget(title: "Password\n", subTitle: "*******"),
-            onTap: () {
-              dialog_widget(context, "Password", passwordEditingController);
-            },
-          ),
-          UIHelper.verticalSpaceLarge,
+          StreamBuilder(
+              stream: getProfileRXObj.getProfileData,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  Map data = snapshot.data["data"]["user"];
+                  telePhoneEditingController.text = data["phone"];
+                  emailPhoneEditingController.text = data["email"];
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      UIHelper.verticalSpaceSmall,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 13.w),
+                        child: Text(
+                          "Contacto",
+                          style: TextFontStyle.headline7StyleInter
+                              .copyWith(color: AppColors.appColor9B9B9B),
+                        ),
+                      ),
+                      UIHelper.verticalSpaceSmall,
+                      InkWell(
+                          child: action_widget(
+                              title: "Telefone\n", subTitle: data["phone"]),
+                          onTap: () {
+                            dialog_widget(
+                                context, "Telefone", telePhoneEditingController,
+                                () async {
+                              await postUpdatePhoneRXObj.postUpdatePhone(
+                                  phone: telePhoneEditingController.text);
+                              NavigationService.goBack;
+                            });
+                          }),
+                      InkWell(
+                          child: action_widget(
+                              title: "Email\n",
+                              subTitle: data["email"],
+                              icon: false),
+                          onTap: () {
+                            dialog_widget(context, "Email",
+                                emailPhoneEditingController, () {});
+                          }),
+                      UIHelper.verticalSpaceMedium,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 13.w),
+                        child: Text(
+                          "Dados Privados",
+                          style: TextFontStyle.headline7StyleInter
+                              .copyWith(color: AppColors.appColor9B9B9B),
+                        ),
+                      ),
+                      UIHelper.verticalSpaceSmall,
+                      InkWell(
+                        child: action_widget(
+                            title: "Password\n",
+                            subTitle: "*******",
+                            icon: false),
+                        onTap: () {
+                          dialog_widget(context, "Password",
+                              passwordEditingController, () {});
+                        },
+                      ),
+                      UIHelper.verticalSpaceLarge,
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return SizedBox.shrink();
+                }
+                return loadingIndicatorCircle(context: context);
+              })
         ]),
       ),
     );
   }
 
-  Future<dynamic> dialog_widget(
-      BuildContext context, String title, TextEditingController controller) {
+  Future<dynamic> dialog_widget(BuildContext context, String title,
+      TextEditingController controller, Function onCallback) {
     return showDialog(
       barrierColor: Colors.transparent,
       context: context,
@@ -157,7 +229,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      onCallback();
+                    },
                     child: Text(
                       'Save',
                       style: TextFontStyle.headline3StyleArial,
@@ -187,9 +261,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 class action_widget extends StatelessWidget {
   String title = "";
   String subTitle = "";
+  bool icon = true;
   action_widget({
     required this.title,
     required this.subTitle,
+    this.icon = true,
     Key? key,
   }) : super(key: key);
 
@@ -215,10 +291,11 @@ class action_widget extends StatelessWidget {
                       .copyWith(color: AppColors.appColor67605F),
                 ),
               ])),
-              Icon(
-                Icons.arrow_forward_sharp,
-                color: AppColors.inactiveColor,
-              )
+              if (icon)
+                Icon(
+                  Icons.arrow_forward_sharp,
+                  color: AppColors.inactiveColor,
+                )
             ]),
       ),
     );

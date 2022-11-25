@@ -1,9 +1,11 @@
+import 'package:badges/badges.dart';
 import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:plix/constants/app_color.dart';
 import 'package:plix/features/dashboard/presentation/home_screen.dart';
+import 'package:plix/networks/api_acess.dart';
 
 import 'constants/app_constants.dart';
 import 'features/categories/presentation/category_search_screen.dart';
@@ -266,11 +268,37 @@ class _NavigationScreenState extends State<NavigationScreen> {
             ),
           ),
           CustomNavigationBarItem(
-            icon: SvgPicture.asset(
-              AssetIcons.cart,
-              color: (_currentIndex == 2)
-                  ? AppColors.appColorFFFFFF
-                  : AppColors.appColorEDBB43,
+            icon: Badge(
+              position: BadgePosition(start: 25, top: -5),
+              badgeContent: StreamBuilder(
+                stream: getCartRXObj.getCartDataRes,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    Map data = snapshot.data["data"];
+                    List carts = data["carts"];
+                    return Text(
+                      carts.length.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text(
+                      "0",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    );
+                  }
+                  return SizedBox.shrink();
+                },
+              ),
+              child: SvgPicture.asset(
+                AssetIcons.cart,
+                color: (_currentIndex == 2)
+                    ? AppColors.appColorFFFFFF
+                    : AppColors.appColorEDBB43,
+              ),
             ),
           ),
           CustomNavigationBarItem(

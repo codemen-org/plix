@@ -339,6 +339,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                             ),
+                          
                           ),
                           Expanded(
                               flex: 2,
@@ -410,6 +411,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ],
                   ),
                 ),
+               
                 UIHelper.verticalSpaceSmall,
               ],
             ),

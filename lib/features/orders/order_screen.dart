@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:lottie/lottie.dart';
 import 'package:plix/constants/text_font_style.dart';
 import 'package:plix/helpers/ui_helpers.dart';
@@ -11,6 +14,7 @@ import 'package:plix/networks/api_acess.dart';
 import '../../constants/app_color.dart';
 import '../../constants/app_constants.dart';
 import '../../widgets/custom_button.dart';
+import '../cart/presentation/time_slot.dart';
 
 class OrderScreen extends StatefulWidget {
   OrderScreen({Key? key}) : super(key: key);
@@ -23,7 +27,8 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getCartRX.getCartData();
+      getCartRXObj.getCartData();
+      getTimeSlotRXObj.getTimeSlotData();
     });
     super.initState();
   }
@@ -32,46 +37,44 @@ class _OrderScreenState extends State<OrderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: SizedBox(
-          height: 1.sh,
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            UIHelper.verticalSpaceMedium,
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 13.w),
-              child: Text(
-                'Morada',
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          UIHelper.verticalSpaceMedium,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 13.w),
+            child: Text(
+              'Morada',
+              style: TextFontStyle.headline7StyleInter
+                  .copyWith(color: AppColors.appColor9B9B9B),
+            ),
+          ),
+          UIHelper.verticalSpaceMedium,
+          ListTile(
+            title: Text(
+              'A tua morada',
+              style: TextFontStyle.headline5StyleInter
+                  .copyWith(color: AppColors.appColor2C303E),
+            ),
+            tileColor: Colors.white,
+            subtitle: Text(
+              'Morada do utilizador',
+              style: TextFontStyle.headline7StyleInter
+                  .copyWith(color: AppColors.appColor67605F),
+            ),
+            trailing: Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.amberAccent[400],
+            ),
+          ),
+          UIHelper.verticalSpaceMedium,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 13.w),
+            child: Text('Hora de Entrega',
                 style: TextFontStyle.headline7StyleInter
-                    .copyWith(color: AppColors.appColor9B9B9B),
-              ),
-            ),
-            UIHelper.verticalSpaceMedium,
-            ListTile(
-              title: Text(
-                'A tua morada',
-                style: TextFontStyle.headline5StyleInter
-                    .copyWith(color: AppColors.appColor2C303E),
-              ),
-              tileColor: Colors.white,
-              subtitle: Text(
-                'Morada do utilizador',
-                style: TextFontStyle.headline7StyleInter
-                    .copyWith(color: AppColors.appColor67605F),
-              ),
-              trailing: Icon(
-                Icons.arrow_forward_rounded,
-                color: Colors.amberAccent[400],
-              ),
-            ),
-            UIHelper.verticalSpaceMedium,
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 13.w),
-              child: Text('Hora de Entrega',
-                  style: TextFontStyle.headline7StyleInter
-                      .copyWith(color: AppColors.appColor9B9B9B)),
-            ),
-            UIHelper.verticalSpaceMedium,
-            ListTile(
+                    .copyWith(color: AppColors.appColor9B9B9B)),
+          ),
+          UIHelper.verticalSpaceMedium,
+          InkWell(
+            child: ListTile(
               title: Text(
                 'Agora',
                 style: TextFontStyle.headline5StyleInter
@@ -88,124 +91,249 @@ class _OrderScreenState extends State<OrderScreen> {
                 color: Colors.amberAccent[400],
               ),
             ),
-            UIHelper.verticalSpaceMedium,
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 13.w),
-              child: Text('Detalhes do Pedido',
-                  style: TextFontStyle.headline7StyleInter
-                      .copyWith(color: AppColors.appColor9B9B9B)),
-            ),
-            UIHelper.verticalSpaceMedium,
-            StreamBuilder(
-                stream: getCartRX.getCartDataRes,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    Map data = snapshot.data["data"];
-                    List carts = data["carts"];
-                    return Container(
-                      width: double.infinity,
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 13.w),
-                      decoration: BoxDecoration(color: Colors.white),
-                      child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: carts.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      carts[index]["food"]["name"],
-                                      style: TextFontStyle.headline5StyleInter
+            onTap: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return CartBottomSheet();
+                  });
+            },
+          ),
+          UIHelper.verticalSpaceMedium,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 13.w),
+            child: Text('Detalhes do Pedido',
+                style: TextFontStyle.headline7StyleInter
+                    .copyWith(color: AppColors.appColor9B9B9B)),
+          ),
+          UIHelper.verticalSpaceMedium,
+          StreamBuilder(
+              stream: getCartRXObj.getCartDataRes,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  Map data = snapshot.data["data"];
+                  List carts = data["carts"];
+                  return Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 13),
+                    decoration: BoxDecoration(color: Colors.white),
+                    child: ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: carts.length,
+                      itemBuilder: (context, index) {
+                        List addOns = carts[index]["cart_addons"];
+                        return Slidable(
+                          key: const ValueKey(0),
+
+                          // The start action pane is the one at the left or the top side.
+                          startActionPane: ActionPane(
+                            // A motion is a widget used to control how the pane animates.
+                            motion: const ScrollMotion(),
+
+                            // A pane can dismiss the Slidable.
+                            dismissible: DismissiblePane(onDismissed: () {
+                              postDeleteCartRXObj.postCartData(
+                                  carts[index]["code"].toString());
+                            }),
+
+                            // All actions are defined in the children parameter.
+                            children: [
+                              // A SlidableAction can have an icon and/or a label.
+                              SlidableAction(
+                                onPressed: (context) {
+                                  postDeleteCartRXObj.postCartData(
+                                      carts[index]["code"].toString());
+                                },
+                                backgroundColor: Color(0xFFFE4A49),
+                                foregroundColor: Colors.white,
+                                icon: Icons.delete,
+                                label: 'Delete',
+                              ),
+                            ],
+                          ),
+
+                          child: Column(
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width: .5.sw,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              carts[index]["food_option"]
+                                                  ["name"],
+                                              style: TextFontStyle
+                                                  .headline5StyleInter
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .appColor2C303E,
+                                                      overflow:
+                                                          TextOverflow.clip),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8),
+                                              child: Text(
+                                                carts[index]["quantity"]
+                                                        .toString() +
+                                                    ' Unidade',
+                                                style: TextFontStyle
+                                                    .headline3StyleArial
+                                                    .copyWith(
+                                                        color: AppColors
+                                                            .appColor2C303E),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Text(
+                                        carts[index]["food_option"]
+                                            ["description"],
+                                        style: TextFontStyle.headline7StyleInter
+                                            .copyWith(
+                                                color:
+                                                    AppColors.appColor67605F),
+                                      ),
+                                      if (addOns.isNotEmpty)
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Add One : ",
+                                              style: TextFontStyle
+                                                  .headline7StyleInter
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .appColor67605F),
+                                            ),
+                                            SizedBox(
+                                              height: 15,
+                                              width: .5.sw,
+                                              child: ListView.builder(
+                                                shrinkWrap: true,
+                                                itemCount: addOns.length,
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemBuilder: (context, i) {
+                                                  if (addOns.length - 1 == i) {
+                                                    return Text(
+                                                      addOns[i]["addon"]
+                                                          ["name"],
+                                                      style: TextFontStyle
+                                                          .headline7StyleInter
+                                                          .copyWith(
+                                                              color: AppColors
+                                                                  .appColor67605F),
+                                                    );
+                                                  } else {
+                                                    return Text(
+                                                      addOns[i]["addon"]
+                                                              ["name"] +
+                                                          ", ",
+                                                      style: TextFontStyle
+                                                          .headline7StyleInter
+                                                          .copyWith(
+                                                              color: AppColors
+                                                                  .appColor67605F),
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
+                                  ),
+                                  Spacer(),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: Text(
+                                      carts[index]["total"],
+                                      style: TextFontStyle.headline7StyleInter
                                           .copyWith(
                                               color: AppColors.appColor2C303E),
                                     ),
-                                    Text(
-                                      carts[index]["food"]["description"],
-                                      style: TextFontStyle.headline7StyleInter
-                                          .copyWith(
-                                              color: AppColors.appColor67605F),
-                                    ),
-                                  ],
-                                ),
-                                Spacer(),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8),
-                                  child: Text(
-                                    carts[index]["quantity"].toString() +
-                                        ' Unidade',
-                                    style: TextFontStyle.headline3StyleArial
-                                        .copyWith(
-                                            color: AppColors.appColor2C303E),
                                   ),
-                                ),
-                                Spacer(),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8),
-                                  child: Text(
-                                    carts[index]["food"]["price_in_euro"],
-                                    style: TextFontStyle.headline7StyleInter
-                                        .copyWith(
-                                            color: AppColors.appColor2C303E),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Expanded(
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Lottie.asset(AssetIcons.lottie_food_loading),
-                      ),
-                    );
-                  }
-                  return SizedBox.shrink();
-                }),
-            UIHelper.verticalSpaceSmall,
-            ListTile(
-                tileColor: Colors.white,
-                leading: Text("Total",
-                    style: TextFontStyle.headline7StyleInter
-                        .copyWith(color: AppColors.appColor2C303E)),
-                trailing: Text("15,00 €",
-                    style: TextFontStyle.headline5StyleInter
-                        .copyWith(color: AppColors.appColor2C303E))),
-            UIHelper.verticalSpaceSemiLarge,
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 13.w),
-                child: customeButton(
-                  name: 'Fazer pedido',
-                  height: .075.sh,
-                  minWidth: double.infinity,
-                  borderRadius: 5.r,
-                  color: AppColors.inactiveColor,
-                  textStyle: TextFontStyle.headline4StyleInter
-                      .copyWith(color: AppColors.appColor4D3E39),
-                  context: context,
-                  onCallBack: () async {
-                    NavigationService.navigateTo(Routes.paymentScreen);
-                  },
-                ),
+                                ],
+                              ),
+                              Divider(
+                                thickness: .5,
+                                color: AppColors.appColor67605F,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Lottie.asset(AssetIcons.lottie_food_loading),
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              }),
+          UIHelper.verticalSpaceSmall,
+          ListTile(
+              tileColor: Colors.white,
+              leading: Text("Total",
+                  style: TextFontStyle.headline7StyleInter
+                      .copyWith(color: AppColors.appColor2C303E)),
+              trailing: StreamBuilder(
+                  stream: getCartRXObj.getCartDataRes,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      Map data = snapshot.data["data"];
+                      return Text(data["cart_totals"]["total_price"],
+                          style: TextFontStyle.headline5StyleInter
+                              .copyWith(color: AppColors.appColor2C303E));
+                    } else if (snapshot.hasError) {
+                      SizedBox.shrink();
+                    }
+                    return Text("Loading",
+                        style: TextFontStyle.headline5StyleInter
+                            .copyWith(color: AppColors.appColor2C303E));
+                  })),
+          UIHelper.verticalSpaceSmall,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 13.w),
+              child: customeButton(
+                name: 'Fazer pedido',
+                height: .075.sh,
+                minWidth: double.infinity,
+                borderRadius: 5.r,
+                color: AppColors.inactiveColor,
+                textStyle: TextFontStyle.headline4StyleInter
+                    .copyWith(color: AppColors.appColor4D3E39),
+                context: context,
+                onCallBack: () async {
+                  postCreateOrderRXObj.postCreateOrder(
+                      deliveryDate: "", timeSllot: "");
+             
+                },
               ),
             ),
-            UIHelper.verticalSpaceMedium,
-          ]),
-        ),
+          ),
+          UIHelper.verticalSpaceLarge,
+        ]),
       ),
     );
   }

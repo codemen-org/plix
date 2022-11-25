@@ -8,10 +8,13 @@ import 'package:plix/features/product/presentation/product_detail_screen.dart';
 import '../features/authentication/presentation/forget_pw/forget_pw_screen.dart';
 import '../features/authentication/presentation/forget_pw/insertmail_screen.dart';
 import '../features/authentication/presentation/signup/verifyotp/otp.dart';
+import '../features/cart/presentation/time_slot.dart';
+import '../features/cart/presentation/time_slot.dart';
 import '../features/categories/presentation/category_search_screen.dart';
 import '../features/checkout/presentation/payment_option.dart';
 import '../features/authentication/presentation/signup/signup_screen.dart';
 import '../features/dashboard/presentation/slider_webview.dart';
+import '../features/profile/presentation/profle_screen.dart';
 import '../loading_screen.dart';
 import '../features/dashboard/presentation/home_screen.dart';
 
@@ -19,6 +22,7 @@ class Routes {
   static const String logInScreen = '/logIn';
   static const String signUpScreen = '/signUp';
   static const String home = '/home';
+  static const String profileScreen = '/profileScreen';
   static const String productDetailScreen = '/ProductDetailScreen';
   static const String addressScreen = '/assdessScreen';
   static const String paymentScreen = '/paymentScreen';
@@ -29,6 +33,7 @@ class Routes {
   static const String loadingScreen = '/loadingScreen';
   static const String forgotPWScreen = '/forgotPWScreen';
   static const String sliderWebViewPage = '/sliderWebViewPage';
+  static const String cartBottomSheet = '/cartBottomSheet';
 }
 
 class RouteGenerator {
@@ -69,10 +74,13 @@ class RouteGenerator {
                 widget: const AddressScreen(), settings: settings)
             : CupertinoPageRoute(builder: (context) => const AddressScreen());
       case Routes.paymentScreen:
+        final args = settings.arguments as Map;
         return Platform.isAndroid
             ? _FadedTransitionRoute(
-                widget: const PaymentScreen(), settings: settings)
-            : CupertinoPageRoute(builder: (context) => const PaymentScreen());
+                widget: PaymentScreen(orderID: args["orderID"]),
+                settings: settings)
+            : CupertinoPageRoute(
+                builder: (context) => PaymentScreen(orderID: args["orderID"]));
       case Routes.naviGationScreen:
         return Platform.isAndroid
             ? _FadedTransitionRoute(
@@ -81,7 +89,6 @@ class RouteGenerator {
                 builder: (context) => const NavigationScreen());
       case Routes.categorySearch:
         final args = settings.arguments as Map;
-
         return Platform.isAndroid
             ? _FadedTransitionRoute(
                 widget: CategorySearch(
@@ -106,6 +113,13 @@ class RouteGenerator {
                 settings:
                     settings) //_FadedTransitionRoute(builder: (context)=> const SobrenosScreen())
             : CupertinoPageRoute(builder: (context) => InsertEmailScreen());
+      case Routes.profileScreen:
+        return Platform.isAndroid
+            ? _FadedTransitionRoute(
+                widget: ProfileScreen(),
+                settings:
+                    settings) //_FadedTransitionRoute(builder: (context)=> const SobrenosScreen())
+            : CupertinoPageRoute(builder: (context) => ProfileScreen());
       case Routes.forgotPWScreen:
         return Platform.isAndroid
             ? _FadedTransitionRoute(
@@ -113,6 +127,13 @@ class RouteGenerator {
                 settings:
                     settings) //_FadedTransitionRoute(builder: (context)=> const SobrenosScreen())
             : CupertinoPageRoute(builder: (context) => ForgotPWScreen());
+      case Routes.cartBottomSheet:
+        return Platform.isAndroid
+            ? _FadedTransitionRoute(
+                widget: CartBottomSheet(),
+                settings:
+                    settings) //_FadedTransitionRoute(builder: (context)=> const SobrenosScreen())
+            : CupertinoPageRoute(builder: (context) => CartBottomSheet());
       case Routes.sliderWebViewPage:
         final args = settings.arguments as Map;
         return Platform.isAndroid

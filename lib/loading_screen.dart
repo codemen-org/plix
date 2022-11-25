@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:plix/features/profile/data/rx_get_profile/rx.dart';
 
 import 'navigation_screen.dart';
 import 'networks/dio/dio.dart';
@@ -36,8 +37,9 @@ class _LoadingState extends State<Loading> {
       await getSliderRXObj.fetchSlider();
       await getShopCategoriRXObj.fetchShopCategoryData();
       await getShopItemRXObj.fetchShopItemData();
-      await getCartRX.getCartData();
-
+      await getCartRXObj.getCartData();
+      await getAddressRXObj.getAddressData();
+      await getProfileRXObj.fetchProfileData();
 //this should be called after shop api is called
       // String restaurantId = appData.read(kKeyShopID) ?? '';
       // if (restaurantId != '') {

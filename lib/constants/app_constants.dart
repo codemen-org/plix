@@ -20,6 +20,7 @@ class AssetIcons {
   static const String search = 'assets/icons/search.svg';
   static const String cart = 'assets/icons/cart.svg';
   static const String profile = 'assets/icons/profile.svg';
+  static const String shop = 'assets/icons/ic_shop.svg';
   //lotti
   static const String lottie_list_loading =
       'assets/lottie/lottie_list_loading.json';
@@ -31,7 +32,7 @@ class AssetIcons {
       'assets/lottie/restaurant_loading.json';
 
   //old
-  static const String shop = 'assets/icons/shop.svg';
+
   static const String seetings = 'assets/icons/seeting.svg';
 
   static const String edit = 'assets/icons/edit.svg';
