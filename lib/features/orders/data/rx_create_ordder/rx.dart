@@ -26,8 +26,8 @@ class PostCreateOrderRX {
         builder: (context) => loadingIndicatorCircle(context: context),
       );
       Map<String, String> data = {
-        "delivery_date": "25-11-2022",
-        "time_slot": "16:30-16:45"
+        "delivery_date": deliveryDate,
+        "time_slot": timeSllot
       };
       Map resdata = await api.postCreateOrder(data);
 

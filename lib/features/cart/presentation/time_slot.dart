@@ -8,8 +8,10 @@ import 'package:plix/constants/app_color.dart';
 import 'package:plix/helpers/ui_helpers.dart';
 import 'package:plix/networks/api_acess.dart';
 import 'package:plix/widgets/loading_indicators.dart';
+import 'package:provider/provider.dart';
 
 import '../../../helpers/toast.dart';
+import '../../../provider/order_date_time.dart';
 import '../model/dateslot.dart';
 import 'widget/slot_widget.dart';
 
@@ -121,6 +123,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                               // controller.selectedSlot.value = selectedSlot;
                               log("selected date :  ${selectedDate}");
                               log("selected slot :  ${selectedSlot!.slotValue.toString()}");
+                              context
+                                  .read<DateTimeProvider>()
+                                  .changTimeSlot(selectedDate, selectedSlot!);
                               // print(
                               //     "selected date :  ${controller.selectedDate.value}");
                               // print(

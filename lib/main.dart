@@ -24,6 +24,7 @@ import 'helpers/navigation_service.dart';
 import 'helpers/notification_service.dart';
 import 'navigation_screen.dart';
 import 'provider/catpopup_status.dart';
+import 'provider/order_date_time.dart';
 import 'provider/product_id_provider.dart';
 import 'provider/sub_category.dart';
 import 'features/categories/presentation/category_search_screen.dart';
@@ -61,6 +62,9 @@ class MyApp extends StatelessWidget {
             create: ((context) => EmailProvider())),
         ChangeNotifierProvider<ProductPriceProvider>(
           create: ((context) => ProductPriceProvider()),
+        ),
+        ChangeNotifierProvider<DateTimeProvider>(
+          create: ((context) => DateTimeProvider()),
         )
       ],
       child: LayoutBuilder(

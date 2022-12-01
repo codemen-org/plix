@@ -10,10 +10,13 @@ import 'package:plix/helpers/ui_helpers.dart';
 import 'package:plix/helpers/all_routes.dart';
 import 'package:plix/helpers/navigation_service.dart';
 import 'package:plix/networks/api_acess.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/app_color.dart';
 import '../../constants/app_constants.dart';
+import '../../provider/order_date_time.dart';
 import '../../widgets/custom_button.dart';
+import '../cart/model/dateslot.dart';
 import '../cart/presentation/time_slot.dart';
 
 class OrderScreen extends StatefulWidget {
@@ -24,12 +27,15 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
+  String? selectdDate;
+  DateSlot? dateSlot;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getCartRXObj.getCartData();
       getTimeSlotRXObj.getTimeSlotData();
     });
+
     super.initState();
   }
 
@@ -82,7 +88,14 @@ class _OrderScreenState extends State<OrderScreen> {
               ),
               tileColor: Colors.white,
               subtitle: Text(
-                '00:00H / 01-05-2021',
+                context.watch<DateTimeProvider>().selectedSlot != null
+                    ? context
+                            .watch<DateTimeProvider>()
+                            .selectedSlot!
+                            .slotDisplay +
+                        ' H / ' +
+                        context.watch<DateTimeProvider>().selectedDate
+                    : "Select Delivery Time",
                 style: TextFontStyle.headline7StyleInter
                     .copyWith(color: AppColors.appColor67605F),
               ),
@@ -325,9 +338,18 @@ class _OrderScreenState extends State<OrderScreen> {
                     .copyWith(color: AppColors.appColor4D3E39),
                 context: context,
                 onCallBack: () async {
-                  postCreateOrderRXObj.postCreateOrder(
-                      deliveryDate: "", timeSllot: "");
-             
+                  String date = context.read<DateTimeProvider>().selectedDate;
+                  DateSlot? slot =
+                      context.read<DateTimeProvider>().selectedSlot;
+                  if (date != "" && slot != null) {
+                    postCreateOrderRXObj.postCreateOrder(
+                        deliveryDate: date, timeSllot: slot.slotValue);
+                  } else {
+                    ScaffoldMessenger.of(NavigationService.context)
+                        .showSnackBar(SnackBar(
+                      content: Text("Select Time Slot To Deliver"),
+                    ));
+                  }
                 },
               ),
             ),
