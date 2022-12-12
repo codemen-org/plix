@@ -293,7 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Container(
           margin: MediaQuery.of(context).viewInsets,
           color: AppColors.appColor4D3E39,
-          height: .25.sh,
+          height: .19.sh,
           width: .55.sw,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -311,7 +311,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ))),
               UIHelper.verticalSpaceSmall,
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Spacer(),
                   TextButton(
                     onPressed: () {
                       onCallback();
@@ -321,7 +323,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: TextFontStyle.headline3StyleArial,
                     ),
                   ),
-                  Spacer(),
                   TextButton(
                     onPressed: () {
                       NavigationService.goBack;
@@ -400,7 +401,7 @@ Future<dynamic> reset_pw_dialog_widget(BuildContext context) {
           child: Container(
         margin: MediaQuery.of(context).viewInsets,
         color: AppColors.appColor4D3E39,
-        height: .45.sh,
+        height: .40.sh,
         width: .6.sw,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -441,7 +442,9 @@ Future<dynamic> reset_pw_dialog_widget(BuildContext context) {
                   ))),
               UIHelper.verticalSpaceSmall,
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Spacer(),
                   TextButton(
                     onPressed: () {
                       NavigationService.goBack;
@@ -453,7 +456,6 @@ Future<dynamic> reset_pw_dialog_widget(BuildContext context) {
                       style: TextFontStyle.headline3StyleArial,
                     ),
                   ),
-                  Spacer(),
                   TextButton(
                     onPressed: () {
                       NavigationService.goBack;
