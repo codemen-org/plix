@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:plix/constants/app_color.dart';
+import 'package:plix/constants/text_font_style.dart';
 import 'package:plix/helpers/all_routes.dart';
 import 'package:plix/helpers/navigation_service.dart';
 import 'package:plix/helpers/toast.dart';
@@ -17,7 +18,7 @@ import 'widget/order_item.dart';
 class OrderHistoryScreen extends StatefulWidget {
   @override
   State<OrderHistoryScreen> createState() => _OrderHistoryScreenState();
-}
+} 
 
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   @override
@@ -29,31 +30,22 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+
           leading: BackButton(
             color: Colors.white,
           ),
           centerTitle: true,
           backgroundColor: Get.theme.primaryColorDark,
           title: Text(
-            "Histórico de pedidos".tr,
-            style: TextStyle(
-              color: Get.theme.primaryColor,
-            ),
+            "Order Historys".tr,
+            style: TextFontStyle.headline2StyleArial,
           ),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16, top: 20),
-              child: Text(
-                "Pedidos Anteriores".tr,
-                style: GoogleFonts.poppins(
-                  color: AppColors.appColor67605F,
-                ),
-              ),
-            ),
+          
             UIHelper.verticalSpaceSmall,
             Expanded(
                 child: StreamBuilder(

@@ -293,7 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Container(
           margin: MediaQuery.of(context).viewInsets,
           color: AppColors.appColor4D3E39,
-          height: .19.sh,
+          height: .21.sh,
           width: .55.sw,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -401,7 +401,7 @@ Future<dynamic> reset_pw_dialog_widget(BuildContext context) {
           child: Container(
         margin: MediaQuery.of(context).viewInsets,
         color: AppColors.appColor4D3E39,
-        height: .40.sh,
+        height: .43.sh,
         width: .6.sw,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -495,9 +495,12 @@ Future<dynamic> show_confirmation(
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Text(
-                  resaon,
-                  style: TextFontStyle.headline3StyleInter,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 0, left: 5.0, right: 5.0, top: 6.0),
+                  child: Text(
+                    resaon,
+                    style: TextFontStyle.headline3StyleInter,
+                  ),
                 ),
               ),
               Spacer(),
