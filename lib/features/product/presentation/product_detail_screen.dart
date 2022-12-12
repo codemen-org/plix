@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:lottie/lottie.dart';
 import 'package:plix/features/product/model/add_one_list.dart';
@@ -200,7 +201,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10.r),
                           child: Text(
-                            "Descrição Produto",
+                            "Descrição Produto".tr,
                             style: TextFontStyle.headline2StyleInter
                                 .copyWith(color: AppColors.appColor000000),
                           ),
@@ -209,7 +210,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10.r),
                           child: Text(
-                            "Selecione uma opção",
+                            "Selecione uma opção".tr,
                             style: TextFontStyle.headline7StyleInter
                                 .copyWith(color: AppColors.appColor9B9B9B),
                           ),
@@ -259,7 +260,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10.r),
                           child: Text(
-                            "Selecione uma opção ingrediente extra",
+                            "Selecione uma opção ingrediente extra".tr,
                             style: TextFontStyle.headline7StyleInter
                                 .copyWith(color: AppColors.appColor9B9B9B),
                           ),
@@ -302,7 +303,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 : AutovalidateMode.disabled,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Enter notes';
+                                return 'Enter notes'.tr;
                               }
                               return null;
                             },
@@ -316,10 +317,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               color: AppColors.headLine2Color,
                             ),
                             decoration: InputDecoration(
-                              hintText: 'Introduza a sua nota',
+                              hintText: 'Introduza a sua nota'.tr,
                               hintStyle: TextFontStyle.headline5StyleInter
                                   .copyWith(color: AppColors.appColor9B9B9B),
-                              labelText: 'Notas',
+                              labelText: 'Notas'.tr,
                               labelStyle: TextFontStyle.headline7StyleInter
                                   .copyWith(color: AppColors.appColor9B9B9B),
                               errorStyle: TextStyle(
@@ -382,11 +383,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               } else if (snapshot.hasError) {
                 return SizedBox.shrink();
               }
-              return Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Lottie.asset(AssetIcons.lottie_food_loading),
-                ),
+              return Align(
+                alignment: Alignment.bottomCenter,
+                child: Lottie.asset(AssetIcons.lottie_food_loading),
               );
             }),
       ),
@@ -401,7 +400,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               children: [
                 Text.rich(TextSpan(children: [
                   TextSpan(
-                      text: 'Total Price\n',
+                      text: 'Total Price\n'.tr,
                       style: TextFontStyle.headline4StyleArial),
                   TextSpan(
                       text: (context.watch<ProductPriceProvider>().price *
@@ -435,7 +434,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                     child: Center(
                         child: Text(
-                      "Adicionar",
+                      "Adicionar".tr,
                       style: TextFontStyle.headline4StyleInter
                           .copyWith(color: AppColors.appColor4D3E39),
                     )),

@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/route_manager.dart';
 import 'package:plix/constants/text_font_style.dart';
+import 'package:plix/features/profile/data/rx_post_reset_pw/api.dart';
 import 'package:plix/helpers/ui_helpers.dart';
 import 'package:plix/helpers/all_routes.dart';
 import 'package:plix/helpers/navigation_service.dart';
@@ -13,7 +16,6 @@ import 'package:plix/widgets/loading_indicators.dart';
 
 import '../../../constants/app_color.dart';
 import '../../../networks/api_acess.dart';
-import '../../../widgets/lebel_text_button.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -31,8 +33,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
+          toolbarHeight: .05.sh,
           title: Text(
-            'O meu perfil',
+            'O meu perfil'.tr,
             style: TextFontStyle.headline3StyleInter
                 .copyWith(color: AppColors.appColorFFFFFF),
           ),
@@ -43,16 +46,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 13.w),
             child: Text(
-              "Nome de Utilizador",
+              "Nome de Utilizador".tr,
               style: TextFontStyle.headline3StyleInter
                   .copyWith(color: AppColors.appColor000000),
             ),
           ),
-          UIHelper.verticalSpaceSemiLarge,
+          UIHelper.verticalSpaceSmall,
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 13.w),
             child: Text(
-              "As minhas morada",
+              "As minhas morada".tr,
               style: TextFontStyle.headline7StyleInter
                   .copyWith(color: AppColors.appColor9B9B9B),
             ),
@@ -63,8 +66,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   List address = snapshot.data["data"]["addresses"];
-                  if (address.length != -1) {
+                  if (address.length != 0) {
                     return ListView.builder(
+                      padding: EdgeInsets.all(0),
                       shrinkWrap: true,
                       itemCount: address.length,
                       itemBuilder: (context, index) {
@@ -73,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: ListTile(
                             isThreeLine: true,
                             leading: Icon(
-                              address[index]["is_default"] != 1
+                              address[index]["is_default"] == 1
                                   ? Icons.check_circle
                                   : Icons.radio_button_unchecked,
                               color: AppColors.appColor000000,
@@ -86,9 +90,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: TextFontStyle.headline7StyleInter
                                   .copyWith(color: AppColors.appColor67605F),
                             ),
-                            trailing: Icon(
-                              Icons.arrow_forward_sharp,
-                              color: AppColors.inactiveColor,
+                            trailing: Wrap(
+                              children: [
+                                if (address[index]["is_default"] != 1)
+                                  InkWell(
+                                    onTap: () async {
+                                      await deleteAddressWithIdRXObj
+                                          .deleteAddressWithIData(
+                                              address[index]['id']);
+                                    },
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: AppColors.appColor4D3E39,
+                                    ),
+                                  ),
+                                UIHelper.horizontalSpaceSmall,
+                                InkWell(
+                                  onTap: () async {
+                                    await getAddressWithIdRXObj
+                                        .getAddressWithIData(
+                                            address[index]['id']);
+                                    NavigationService.navigateToWithArgs(
+                                        Routes.addressScreen,
+                                        {'id': address[index]['id']});
+                                  },
+                                  child: Icon(
+                                    Icons.arrow_forward_sharp,
+                                    color: AppColors.inactiveColor,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         );
@@ -102,10 +133,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 }
                 return SizedBox.shrink();
               }),
+
           // UIHelper.verticalSpaceSmall,
           InkWell(
             onTap: () {
-              NavigationService.navigateTo(Routes.addressScreen);
+              getAddressWithIdRXObj.clean();
+              NavigationService.navigateToWithArgs(Routes.addressScreen, {});
             },
             child: Row(
               children: [
@@ -118,13 +151,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 Text(
-                  "Adicionar Morada",
+                  "Adicionar Morada".tr,
                   style: TextFontStyle.headline7StyleInter
                       .copyWith(color: AppColors.appColor9B9B9B),
                 ),
               ],
             ),
           ),
+          UIHelper.verticalSpaceSmall,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 13.w),
+            child: Text(
+              "My Orders".tr,
+              style: TextFontStyle.headline7StyleInter
+                  .copyWith(color: AppColors.appColor9B9B9B),
+            ),
+          ),
+          UIHelper.verticalSpaceSmall,
+          InkWell(
+              child: action_widget(
+                  title: "Order History\n".tr,
+                  subTitle: "Click to check your order".tr),
+              onTap: () {
+                NavigationService.navigateTo(Routes.orderHistoryScreen);
+              }),
           StreamBuilder(
               stream: getProfileRXObj.getProfileData,
               builder: (context, snapshot) {
@@ -139,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 13.w),
                         child: Text(
-                          "Contacto",
+                          "Contacto".tr,
                           style: TextFontStyle.headline7StyleInter
                               .copyWith(color: AppColors.appColor9B9B9B),
                         ),
@@ -149,9 +199,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: action_widget(
                               title: "Telefone\n", subTitle: data["phone"]),
                           onTap: () {
-                            dialog_widget(
-                                context, "Telefone", telePhoneEditingController,
-                                () async {
+                            dialog_widget(context, "Telefone".tr,
+                                telePhoneEditingController, () async {
                               await postUpdatePhoneRXObj.postUpdatePhone(
                                   phone: telePhoneEditingController.text);
                               NavigationService.goBack;
@@ -159,18 +208,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           }),
                       InkWell(
                           child: action_widget(
-                              title: "Email\n",
+                              title: "Email\n".tr,
                               subTitle: data["email"],
                               icon: false),
                           onTap: () {
-                            dialog_widget(context, "Email",
-                                emailPhoneEditingController, () {});
+                            // dialog_widget(context, "Email",
+                            //     emailPhoneEditingController, () {});
                           }),
                       UIHelper.verticalSpaceMedium,
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 13.w),
                         child: Text(
-                          "Dados Privados",
+                          "Dados Privados".tr,
                           style: TextFontStyle.headline7StyleInter
                               .copyWith(color: AppColors.appColor9B9B9B),
                         ),
@@ -178,14 +227,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       UIHelper.verticalSpaceSmall,
                       InkWell(
                         child: action_widget(
-                            title: "Password\n",
+                            title: "Password\n".tr,
                             subTitle: "*******",
                             icon: false),
                         onTap: () {
-                          dialog_widget(context, "Password",
-                              passwordEditingController, () {});
+                          reset_pw_dialog_widget(context);
                         },
                       ),
+                      UIHelper.verticalSpaceMedium,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 13.w),
+                        child: Text(
+                          "Account".tr,
+                          style: TextFontStyle.headline7StyleInter
+                              .copyWith(color: AppColors.appColor9B9B9B),
+                        ),
+                      ),
+                      UIHelper.verticalSpaceSmall,
+                      Container(
+                        color: Colors.white,
+                        child: ListTile(
+                            leading: Text("Logout".tr),
+                            trailing: Icon(Icons.logout_outlined),
+                            onTap: () {
+                              show_confirmation(
+                                  context, "Do you want to sign out?".tr,
+                                  () async {
+                                await getLogOutRXObj.fetchLogoutData();
+                              });
+                            }),
+                      ),
+                      UIHelper.verticalSpaceSmall,
+                      Container(
+                          color: Colors.white,
+                          child: ListTile(
+                              leading: Text("Remove Account".tr),
+                              trailing: Icon(Icons.restore_from_trash),
+                              onTap: () {
+                                show_confirmation(context,
+                                    "Do you want to Remove your Account?".tr,
+                                    () async {
+                                  await deleteAccountRXObj.deleteAccountData();
+                                });
+                              })),
                       UIHelper.verticalSpaceLarge,
                     ],
                   );
@@ -233,7 +317,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onCallback();
                     },
                     child: Text(
-                      'Save',
+                      'Save'.tr,
                       style: TextFontStyle.headline3StyleArial,
                     ),
                   ),
@@ -243,7 +327,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       NavigationService.goBack;
                     },
                     child: Text(
-                      'Cancel',
+                      'Cancel'.tr,
                       style: TextFontStyle.headline3StyleArial,
                     ),
                   )
@@ -300,4 +384,156 @@ class action_widget extends StatelessWidget {
       ),
     );
   }
+}
+
+//reset pw
+Future<dynamic> reset_pw_dialog_widget(BuildContext context) {
+  final _formKey = GlobalKey<FormState>();
+  return showDialog(
+    barrierColor: Colors.transparent,
+    context: context,
+    builder: (context) {
+      TextEditingController oldPWController = TextEditingController();
+      TextEditingController newPWController = TextEditingController();
+      TextEditingController reTypePWController = TextEditingController();
+      return Center(
+          child: Container(
+        margin: MediaQuery.of(context).viewInsets,
+        color: AppColors.appColor4D3E39,
+        height: .45.sh,
+        width: .6.sw,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Form(
+            key: _formKey,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              UIHelper.verticalSpaceSmall,
+              Text("Old Password".tr, style: TextFontStyle.headline3StyleInter),
+              UIHelper.verticalSpaceSmall,
+              SizedBox(
+                  height: .05.sh,
+                  width: .55.sw,
+                  child: Material(
+                      child: TextFormField(
+                    controller: oldPWController,
+                  ))),
+              UIHelper.verticalSpaceSmall,
+              Text("New Password".tr, style: TextFontStyle.headline3StyleInter),
+              UIHelper.verticalSpaceSmall,
+              SizedBox(
+                  height: .05.sh,
+                  width: .55.sw,
+                  child: Material(
+                      child: TextFormField(
+                    controller: newPWController,
+                  ))),
+              UIHelper.verticalSpaceSmall,
+              Text("Retype Password".tr,
+                  style: TextFontStyle.headline3StyleInter),
+              UIHelper.verticalSpaceSmall,
+              SizedBox(
+                  height: .05.sh,
+                  width: .55.sw,
+                  child: Material(
+                      child: TextFormField(
+                    controller: reTypePWController,
+                  ))),
+              UIHelper.verticalSpaceSmall,
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      NavigationService.goBack;
+                      postUpdatePWRXObj.postResetPW(oldPWController.text,
+                          newPWController.text, reTypePWController.text);
+                    },
+                    child: Text(
+                      'Save'.tr,
+                      style: TextFontStyle.headline3StyleArial,
+                    ),
+                  ),
+                  Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      NavigationService.goBack;
+                    },
+                    child: Text(
+                      'Cancel'.tr,
+                      style: TextFontStyle.headline3StyleArial,
+                    ),
+                  )
+                ],
+              ),
+            ]),
+          ),
+        ),
+      ));
+    },
+  );
+}
+
+//show_confirmation_dialog
+Future<dynamic> show_confirmation(
+    BuildContext context, String resaon, Function onCallback) {
+  final _formKey = GlobalKey<FormState>();
+  return showDialog(
+    barrierColor: Colors.transparent,
+    context: context,
+    builder: (context) {
+      return Center(
+          child: Container(
+        margin: MediaQuery.of(context).viewInsets,
+        color: AppColors.appColor4D3E39,
+        height: .17.sh,
+        width: .6.sw,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  resaon,
+                  style: TextFontStyle.headline3StyleInter,
+                ),
+              ),
+              Spacer(),
+              Form(
+                key: _formKey,
+                child: Column(children: [
+                  UIHelper.verticalSpaceSmall,
+                  UIHelper.verticalSpaceSmall,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Spacer(),
+                      TextButton(
+                        onPressed: () {
+                          onCallback();
+                        },
+                        child: Text(
+                          'Yes'.tr,
+                          style: TextFontStyle.headline3StyleArial,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          NavigationService.goBack;
+                        },
+                        child: Text(
+                          'No'.tr,
+                          style: TextFontStyle.headline3StyleArial,
+                        ),
+                      )
+                    ],
+                  ),
+                ]),
+              ),
+            ],
+          ),
+        ),
+      ));
+    },
+  );
 }

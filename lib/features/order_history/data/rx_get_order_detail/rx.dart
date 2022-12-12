@@ -9,30 +9,29 @@ import '../../../../../helpers/navigation_service.dart';
 import '../../../../../widgets/loading_indicators.dart';
 import 'api.dart';
 
-class GetAddressRX {
-  final api = GetAddressApi();
+class GetOrderDetailRX {
+  final api = GetOrderDetailApi();
   final storage = GetStorage();
   Map empty = {};
   final BehaviorSubject _dataFetcher = BehaviorSubject<Map>();
-  ValueStream get getCartDataRes => _dataFetcher.stream;
+  ValueStream get getGetOrderDetailDataRes => _dataFetcher.stream;
   String message = "";
-  Future<void> getAddressData() async {
+  Future<void> getGetOrderDetailData(String orderID) async {
     try {
-      // showDialog(
-      //   context: NavigationService.context,
-      //   builder: (context) => loadingIndicatorCircle(context: context),
-      // );
-      Map allData = await api.getAddress();
+      showDialog(
+        context: NavigationService.context,
+        builder: (context) => loadingIndicatorCircle(context: context),
+      );
+      Map allData = await api.getOrderDetail(orderID);
       message = allData["message"];
       _dataFetcher.sink.add(allData);
-      //   NavigationService.goBack;
     } catch (e) {
-      //  NavigationService.goBack;
       _dataFetcher.sink.addError(e);
     } finally {
-      // ScaffoldMessenger.of(NavigationService.context).showSnackBar(SnackBar(
-      //   content: Text(message),
-      // ));
+      NavigationService.goBack;
+      ScaffoldMessenger.of(NavigationService.context).showSnackBar(SnackBar(
+        content: Text(message),
+      ));
     }
   }
 

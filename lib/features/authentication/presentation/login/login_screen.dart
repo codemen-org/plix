@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:plix/helpers/all_routes.dart';
 import 'package:plix/helpers/navigation_service.dart';
 import '../../../../helpers/helper.dart';
@@ -169,7 +170,7 @@ class _LogeinScreenState extends State<LogeinScreen> {
                   Center(
                     child: TextButton(
                       child: Text(
-                        'Forgot password?',
+                        'Forgot password?'.tr,
                         style: TextFontStyle.headline4StyleInter,
                         textAlign: TextAlign.center,
                       ),

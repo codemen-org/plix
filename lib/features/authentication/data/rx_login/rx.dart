@@ -56,7 +56,7 @@ class GetLoginRX {
       //LocalNotificationService.getToken();
       NavigationService.goBack;
 
-      NavigationService.navigateToReplacement(Routes.loadingScreen);
+      NavigationService.popAndReplace(Routes.loadingScreen);
     } catch (e) {
       log(e.toString());
       NavigationService.goBack;

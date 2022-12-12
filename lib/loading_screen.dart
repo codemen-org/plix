@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:plix/features/profile/data/rx_get_profile/rx.dart';
+import 'package:plix/helpers/helper.dart';
 
 import 'navigation_screen.dart';
 import 'networks/dio/dio.dart';
-import 'features/dashboard/presentation/home_screen.dart';
+
 import 'features/authentication/presentation/login/login_screen.dart';
 import 'welcome_screen.dart';
 import 'constants/app_constants.dart';
-import 'helpers/notification_service.dart';
 import 'networks/api_acess.dart';
 
 class Loading extends StatefulWidget {
@@ -24,6 +23,7 @@ class _LoadingState extends State<Loading> {
 
   @override
   void initState() {
+    setId();
     loadInitialData();
     super.initState();
   }
@@ -39,7 +39,9 @@ class _LoadingState extends State<Loading> {
       await getShopItemRXObj.fetchShopItemData();
       await getCartRXObj.getCartData();
       await getAddressRXObj.getAddressData();
+      await getDefaultAddressRXObj.getDefaultAddressData();
       await getProfileRXObj.fetchProfileData();
+      await getOrderListRXObj.getOrderListData();
 //this should be called after shop api is called
       // String restaurantId = appData.read(kKeyShopID) ?? '';
       // if (restaurantId != '') {

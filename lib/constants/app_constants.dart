@@ -30,6 +30,7 @@ class AssetIcons {
       'assets/lottie/lottie_round_food_loading.json';
   static const String restaurant_loading =
       'assets/lottie/restaurant_loading.json';
+  static const String itemnotfound = 'assets/lottie/itemnotfound.json';
 
   //old
 

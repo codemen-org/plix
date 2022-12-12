@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../constants/app_color.dart';
@@ -40,7 +41,7 @@ class _ForgotPWScreenState extends State<ForgotPWScreen> {
         Provider.of<EmailProvider>(context, listen: false);
     emailController.text = emailProvider.email;
     return Scaffold(
-      appBar: AppBar(title: Text("Redefine password"), centerTitle: true),
+      appBar: AppBar(title: Text("Redefine password".tr), centerTitle: true),
       body: Container(
         constraints: const BoxConstraints.expand(),
         decoration: const BoxDecoration(),
@@ -199,9 +200,9 @@ class _ForgotPWScreenState extends State<ForgotPWScreen> {
                                   : AutovalidateMode.disabled,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Retype Password';
+                                  return 'Retype Password'.tr;
                                 } else if (passwordController.text != value) {
-                                  return 'Password Missmatch';
+                                  return 'Password Missmatch'.tr;
                                 }
                                 return null;
                               },
@@ -218,10 +219,10 @@ class _ForgotPWScreenState extends State<ForgotPWScreen> {
                                 contentPadding: const EdgeInsets.symmetric(
                                   vertical: 1.0,
                                 ),
-                                hintText: 'Enter your Password',
+                                hintText: 'Enter your Password'.tr,
                                 hintStyle: TextFontStyle.headline5StyleInter
                                     .copyWith(color: AppColors.appColor9B9B9B),
-                                labelText: 'Retype Password',
+                                labelText: 'Retype Password'.tr,
                                 labelStyle: TextFontStyle.headline5StyleInter
                                     .copyWith(color: AppColors.appColorF4A4A4A),
                                 errorStyle: TextStyle(
@@ -262,7 +263,7 @@ class _ForgotPWScreenState extends State<ForgotPWScreen> {
                             : AutovalidateMode.disabled,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Code Can\'t be empty';
+                            return 'Code Can\'t be empty'.tr;
                           }
                           return null;
                         },
@@ -276,10 +277,11 @@ class _ForgotPWScreenState extends State<ForgotPWScreen> {
                           color: AppColors.headLine2Color,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Enter your verification code check email',
+                          hintText:
+                              'Enter your verification code check email'.tr,
                           hintStyle: TextFontStyle.headline5StyleInter
                               .copyWith(color: AppColors.appColor9B9B9B),
-                          labelText: 'Verification Code',
+                          labelText: 'Verification Code'.tr,
                           labelStyle: TextFontStyle.headline5StyleInter
                               .copyWith(color: AppColors.appColorF4A4A4A),
                           errorStyle: TextStyle(
@@ -294,7 +296,7 @@ class _ForgotPWScreenState extends State<ForgotPWScreen> {
                       UIHelper.verticalSpaceMedium,
                       UIHelper.verticalSpaceSemiLarge,
                       customeButton(
-                        name: 'Change Password',
+                        name: 'Change Password'.tr,
                         height: .065.sh,
                         minWidth: double.infinity,
                         borderRadius: 5.r,

@@ -50,7 +50,7 @@ class _DateTimeSlotWidgetState extends State<DateTimeSlotWidget> {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('dd-MM-yyyy').format(now);
     if (formattedDate == date) {
-      return "Today".tr;
+      return "Today";
     }
     return date;
   }

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../../helpers/navigation_service.dart';
 
 class Logger extends Interceptor {
-  SnackBar snackBar = const SnackBar(
+  SnackBar snackBar = SnackBar(
     content: Text("Some Thing Went Wrong"),
   );
 

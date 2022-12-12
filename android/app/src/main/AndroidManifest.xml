@@ -2,7 +2,7 @@
     package="com.example.plix">
    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/> 
    <application
-        android:label="plix"
+        android:label="Plix"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

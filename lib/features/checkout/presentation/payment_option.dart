@@ -4,10 +4,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:plix/constants/app_color.dart';
+import 'package:plix/helpers/all_routes.dart';
+import 'package:plix/helpers/navigation_service.dart';
+import 'package:plix/helpers/toast.dart';
 import 'package:plix/helpers/ui_helpers.dart';
+import 'package:plix/navigation_screen.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../constants/text_font_style.dart';
+import '../../../networks/api_acess.dart';
 import '../../../networks/endpoints.dart';
 import '../../../widgets/custom_button.dart';
 
@@ -44,17 +49,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
         navigationDelegate: (navigation) async {
           log(navigation.url.toString());
           if (navigation.url.contains("success")) {
-            // setState(() {
-            //   shouldChangeStack = false;
-            // });
-            // if (await canLaunch(request.url)) {
-            //   await launch(request.url);
-            // }
+            ToastUtil.showShortToast("Payment successfull order completed");
+            await getCartRXObj.getCartData();
+            await getOrderListRXObj.getOrderListData();
+            NavigationService.popAndReplace(Routes.naviGationScreen);
+            return NavigationDecision.prevent;
+          } else if (navigation.url.contains("fail")) {
+            ToastUtil.showShortToast("Payment failed order incomplete");
+            NavigationService.goBack;
             return NavigationDecision.prevent;
           } else {
-            // setState(() {
-            //   shouldChangeStack = true;
-            // });
             return NavigationDecision.navigate;
           }
         },

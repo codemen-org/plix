@@ -1,8 +1,10 @@
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:get/get.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:plix/constants/app_color.dart';
@@ -14,8 +16,10 @@ import 'package:plix/widgets/custom_button.dart';
 import '../../../constants/app_constants.dart';
 import '../../../networks/api_acess.dart';
 
+// ignore: must_be_immutable
 class AddressScreen extends StatefulWidget {
-  const AddressScreen({Key? key}) : super(key: key);
+  int? addressId;
+  AddressScreen({this.addressId, Key? key}) : super(key: key);
 
   @override
   State<AddressScreen> createState() => _AddressScreenState();
@@ -28,6 +32,7 @@ class _AddressScreenState extends State<AddressScreen> {
   Set<Marker> mapMarkers = Set<Marker>();
   List<Placemark>? placemarks;
   bool validation = false;
+  bool isDefault = false;
 
   TextEditingController addressNameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
@@ -39,7 +44,25 @@ class _AddressScreenState extends State<AddressScreen> {
 
   void onMapCreated(GoogleMapController controller) {
     mapController = controller;
-    addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
+    if (widget.addressId != null) {
+      getAddressWithIdRXObj.getAddresWithIdRes.listen((value) {
+        if (mounted) {
+          setState(() {
+            addressNameController.text = value['data']['address_name'];
+            addressController.text = value['data']['address'];
+            postalCodeController.text = value['data']['postal_code'];
+            cidadeController.text = value['data']['city'];
+            estadoController.text = value['data']['state'];
+            isDefault = value['data']['is_default'] == 1 ? true : false;
+            lastMapPosition = LatLng(double.parse(value['data']['latitude']),
+                double.parse(value['data']['longitude']));
+            addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
+          });
+        }
+      });
+    } else {
+      addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
+    }
   }
 
   setPostionLatLang(LatLng latLng) {
@@ -121,6 +144,11 @@ class _AddressScreenState extends State<AddressScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: MainAppBarWidget(),
@@ -149,7 +177,7 @@ class _AddressScreenState extends State<AddressScreen> {
                         height: .18.sh, width: .18.sh),
                     UIHelper.verticalSpaceSmall,
                     Text(
-                      "Adicionar Morada",
+                      "Adicionar Morada".tr,
                       style: TextFontStyle.headline3StyleInter
                           .copyWith(color: AppColors.appColorFFFFFF),
                     )
@@ -177,6 +205,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 markers: mapMarkers,
               ),
             ),
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 13.w),
               child: Form(
@@ -184,7 +213,24 @@ class _AddressScreenState extends State<AddressScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    //For Email
+                    ListTile(
+                      contentPadding: EdgeInsets.all(0),
+                      leading: Checkbox(
+                        value: isDefault,
+                        onChanged: (value) {
+                          if (!isDefault) {
+                            setState(() {
+                              isDefault = value!;
+                            });
+                          }
+                        },
+                      ),
+                      title: Text(
+                        "Default Address".tr,
+                        style: TextFontStyle.headline5StyleInter
+                            .copyWith(color: AppColors.appColor2C303E),
+                      ),
+                    ),
                     TextFormField(
                       autovalidateMode: validation
                           ? AutovalidateMode.always
@@ -309,7 +355,6 @@ class _AddressScreenState extends State<AddressScreen> {
                         ),
                       ],
                     ),
-
                     UIHelper.verticalSpaceSmall,
                     TextFormField(
                       autovalidateMode: validation
@@ -340,7 +385,6 @@ class _AddressScreenState extends State<AddressScreen> {
                       ),
                     ),
                     UIHelper.verticalSpaceMedium,
-
                     customeButton(
                       name: 'Continue',
                       height: .065.sh,
@@ -352,17 +396,33 @@ class _AddressScreenState extends State<AddressScreen> {
                       context: context,
                       onCallBack: () async {
                         if (_formKey.currentState!.validate()) {
-                          postAddressRXObj.postNewAdderss(
-                            address: addressController.text,
-                            address_name: addressNameController.text,
-                            lat: lastMapPosition.latitude.toString(),
-                            long: lastMapPosition.longitude.toString(),
-                            postal_code: postalCodeController.text,
-                            country: placemarks!.first.country!,
-                            city: cidadeController.text,
-                            state: estadoController.text,
-                            is_default: 0,
-                          );
+                          if (widget.addressId != null) {
+                            postUpdateAddressRXObj.postUpdateAdderss(
+                              id: widget.addressId!,
+                              address: addressController.text,
+                              address_name: addressNameController.text,
+                              lat: lastMapPosition.latitude.toString(),
+                              long: lastMapPosition.longitude.toString(),
+                              postal_code: postalCodeController.text,
+                              country: placemarks!.first.country!,
+                              city: cidadeController.text,
+                              state: estadoController.text,
+                              is_default: isDefault ? 1 : 0,
+                            );
+                          } else {
+                            postAddressRXObj.postNewAdderss(
+                              address: addressController.text,
+                              address_name: addressNameController.text,
+                              lat: lastMapPosition.latitude.toString(),
+                              long: lastMapPosition.longitude.toString(),
+                              postal_code: postalCodeController.text,
+                              country: placemarks!.first.country!,
+                              city: cidadeController.text,
+                              state: estadoController.text,
+                              is_default: isDefault ? 1 : 0,
+                            );
+                          }
+
                           // setId();
                           // await getLoginRXobj.login(
                           //     emailController.text, passwordController.text);
@@ -372,7 +432,6 @@ class _AddressScreenState extends State<AddressScreen> {
                         }
                       },
                     ),
-
                     UIHelper.verticalSpaceSmall,
                   ],
                 ),

@@ -163,6 +163,8 @@ String date12format(String date) {
 }
 
 setId() async {
+  appdata.writeIfNull(kKeyLanguage, kKeyPortuguese);
+  appdata.writeIfNull(kKeyCountryCode, countriesCode[kKeyPortuguese]);
   var deviceInfo = DeviceInfoPlugin();
   if (Platform.isIOS) {
     var iosDeviceInfo = await deviceInfo.iosInfo;

@@ -14,6 +14,8 @@ import '../features/categories/presentation/category_search_screen.dart';
 import '../features/checkout/presentation/payment_option.dart';
 import '../features/authentication/presentation/signup/signup_screen.dart';
 import '../features/dashboard/presentation/slider_webview.dart';
+import '../features/order_history/presentation/order_details_screen.dart';
+import '../features/order_history/presentation/order_history_screen.dart';
 import '../features/profile/presentation/profle_screen.dart';
 import '../loading_screen.dart';
 import '../features/dashboard/presentation/home_screen.dart';
@@ -34,6 +36,8 @@ class Routes {
   static const String forgotPWScreen = '/forgotPWScreen';
   static const String sliderWebViewPage = '/sliderWebViewPage';
   static const String cartBottomSheet = '/cartBottomSheet';
+  static const String orderHistoryScreen = '/orderHistoryScreen';
+  static const String orderDetailsScreen = '/orderDetailsScreen';
 }
 
 class RouteGenerator {
@@ -69,10 +73,17 @@ class RouteGenerator {
             : CupertinoPageRoute(
                 builder: (context) => const ProductDetailScreen());
       case Routes.addressScreen:
+        final args = settings.arguments as Map;
         return Platform.isAndroid
             ? _FadedTransitionRoute(
-                widget: const AddressScreen(), settings: settings)
-            : CupertinoPageRoute(builder: (context) => const AddressScreen());
+                widget: AddressScreen(addressId: args['id']),
+                settings: settings)
+            : CupertinoPageRoute(builder: (context) => AddressScreen());
+      case Routes.orderHistoryScreen:
+        return Platform.isAndroid
+            ? _FadedTransitionRoute(
+                widget: OrderHistoryScreen(), settings: settings)
+            : CupertinoPageRoute(builder: (context) => OrderHistoryScreen());
       case Routes.paymentScreen:
         final args = settings.arguments as Map;
         return Platform.isAndroid
@@ -134,6 +145,13 @@ class RouteGenerator {
                 settings:
                     settings) //_FadedTransitionRoute(builder: (context)=> const SobrenosScreen())
             : CupertinoPageRoute(builder: (context) => CartBottomSheet());
+      // case Routes.orderDetailsScreen:
+      //   return Platform.isAndroid
+      //       ? _FadedTransitionRoute(
+      //           widget: OrderDetailsScreen(),
+      //           settings:
+      //               settings) //_FadedTransitionRoute(builder: (context)=> const SobrenosScreen())
+      //       : CupertinoPageRoute(builder: (context) => OrderDetailsScreen());
       case Routes.sliderWebViewPage:
         final args = settings.arguments as Map;
         return Platform.isAndroid
@@ -165,7 +183,7 @@ class _FadedTransitionRoute extends PageRouteBuilder {
               Animation<double> secondaryAnimation) {
             return widget;
           },
-          transitionDuration: const Duration(microseconds: 100),
+          transitionDuration: const Duration(microseconds: 500),
           transitionsBuilder: (BuildContext context,
               Animation<double> animation,
               Animation<double> secondaryAnimation,
@@ -173,7 +191,7 @@ class _FadedTransitionRoute extends PageRouteBuilder {
             return FadeTransition(
               opacity: CurvedAnimation(
                 parent: animation,
-                curve: Curves.easeOut,
+                curve: Curves.easeIn,
               ),
               child: child,
             );

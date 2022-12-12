@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:plix/helpers/all_routes.dart';
 import 'package:plix/helpers/navigation_service.dart';
 import 'package:plix/provider/email.dart';
@@ -69,7 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 UIHelper.verticalSpaceMedium,
                 UIHelper.verticalSpaceMedium,
                 Text(
-                  'SignUp',
+                  'SignUp'.tr,
                   style: TextFontStyle.headline2StyleInter
                       .copyWith(color: AppColors.appColorF4A4A4A),
                 ),
@@ -305,9 +306,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   : AutovalidateMode.disabled,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Retype Password';
+                                  return 'Retype Password'.tr;
                                 } else if (passwordController.text != value) {
-                                  return 'Password Missmatch';
+                                  return 'Password Missmatch'.tr;
                                 }
                                 return null;
                               },
@@ -339,7 +340,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                             ),
-                          
                           ),
                           Expanded(
                               flex: 2,
@@ -411,7 +411,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ],
                   ),
                 ),
-               
                 UIHelper.verticalSpaceSmall,
               ],
             ),
@@ -420,5 +419,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-
 }

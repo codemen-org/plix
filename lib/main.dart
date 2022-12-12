@@ -88,8 +88,6 @@ class UtillScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storage = GetStorage();
-    storage.writeIfNull(kKeyLanguage, kKeyPortuguese);
-    storage.writeIfNull(kKeyCountryCode, countriesCode[kKeyPortuguese]);
 
     String language = storage.read(kKeyLanguage);
     String countryCode = storage.read(kKeyCountryCode);
@@ -125,9 +123,6 @@ class UtillScreenMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storage = GetStorage();
-    storage.writeIfNull(kKeyLanguage, kKeyPortuguese);
-    storage.writeIfNull(kKeyCountryCode, countriesCode[kKeyPortuguese]);
-
     String language = storage.read(kKeyLanguage);
     String countryCode = storage.read(kKeyCountryCode);
 

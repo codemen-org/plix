@@ -2,6 +2,7 @@ import 'package:auto_animated/auto_animated.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:plix/constants/app_color.dart';
 import 'package:plix/constants/text_font_style.dart';
 import 'package:plix/features/categories/presentation/category_search_screen.dart';
@@ -50,27 +51,63 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Padding(
-            padding: EdgeInsets.only(bottom: 10),
+          toolbarHeight: .06.sh,
+          centerTitle: true,
+          title: Text(
+            "Plix",
+            style: TextFontStyle.headline1StyleArial
+                .copyWith(color: AppColors.appColorEDBB43),
+          ),
+
+          leading: Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
             child: Image.asset(AssetIcons.splash, height: 40.h, width: 40.w),
           ),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: PopupWidget(
-                language: languageTextController,
-              ),
-            ),
-          ],
+          // actions: [
+          //   Padding(
+          //     padding: EdgeInsets.only(bottom: 10),
+          //     child: PopupWidget(
+          //       language: languageTextController,
+          //     ),
+          //   ),
+          // ],
         ),
-        body: SingleChildScrollView(
-          child: Column(children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 10),
-              child: Column(children: [
-                isloading
-                    ? loadingIndicatorCircle(context: context)
-                    : CarouselSlider.builder(
+        body: isloading
+            ? loadingIndicatorCircle(context: context)
+            : SingleChildScrollView(
+                child: Column(children: [
+                  // Container(
+                  //   decoration: BoxDecoration(
+                  //     boxShadow: [
+                  //       BoxShadow(
+                  //         color: Colors.white.withAlpha(100),
+                  //         blurRadius: 10.0,
+                  //         spreadRadius: 0.0,
+                  //       ),
+                  //     ],
+                  //     border: Border.all(color: Colors.white10.withAlpha(80)),
+                  //     color: Colors.black.withOpacity(0.1),
+                  //   ),
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.all(8.0),
+                  //     child: Row(
+                  //       children: [
+                  //         Image.asset(AssetIcons.splash,
+                  //             height: 40.h, width: 40.w),
+                  //         UIHelper.horizontalSpaceSmall,
+                  //         Text(
+                  //           "Plix",
+                  //           style: TextFontStyle.headline10StyleInter
+                  //               .copyWith(color: AppColors.appColor4D3E39),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    child: Column(children: [
+                      CarouselSlider.builder(
                         itemCount: slider.length,
                         itemBuilder: (context, index, realIndex) =>
                             GestureDetector(
@@ -107,137 +144,140 @@ class _HomeScreenState extends State<HomeScreen> {
                               });
                             }),
                       ),
-              ]),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: slider.asMap().entries.map((entry) {
-                return GestureDetector(
-                  onTap: () => _controller.animateToPage(entry.key),
-                  child: Container(
-                    width: 10.0,
-                    height: 10.0,
-                    margin:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: (Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black)
-                          .withOpacity(_controller == entry.key ? 0.9 : 0.4),
-                    ),
+                    ]),
                   ),
-                );
-              }).toList(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Categorias",
-                    style: TextFontStyle.headline10StyleInter,
-                  ),
-                  GestureDetector(
-                    child: Text(
-                      "Ver todas",
-                      style: TextFontStyle.headline6StyleInter
-                          .copyWith(color: AppColors.appColorFF9500A),
-                    ),
-                    onTap: () {
-                      NavigationService.navigateToWithArgs(
-                        Routes.categorySearch,
-                        {"allCategories": true, "name": ""},
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: slider.asMap().entries.map((entry) {
+                      return GestureDetector(
+                        onTap: () => _controller.animateToPage(entry.key),
+                        child: Container(
+                          width: 10.0,
+                          height: 10.0,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 4.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color:
+                                (Theme.of(context).brightness == Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black)
+                                    .withOpacity(
+                                        _controller == entry.key ? 0.9 : 0.4),
+                          ),
+                        ),
                       );
-                    },
+                    }).toList(),
                   ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 120,
-              child: StreamBuilder(
-                  stream: getShopCategoriRXObj.getCategoryData,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      List catList =
-                          snapshot.data['data']['categories']['data'];
-                      return LiveList(
-                        showItemInterval: Duration(milliseconds: 100),
-                        showItemDuration: Duration(milliseconds: 300),
-                        reAnimateOnVisibility: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: catList.length > 9 ? 10 : catList.length,
-                        itemBuilder: animationItemBuilder(
-                          (index) {
-                            return CategoryWidget(
-                              item: catList[index],
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Categorias".tr,
+                          style: TextFontStyle.headline10StyleInter,
+                        ),
+                        GestureDetector(
+                          child: Text(
+                            "Ver todas".tr,
+                            style: TextFontStyle.headline6StyleInter
+                                .copyWith(color: AppColors.appColorFF9500A),
+                          ),
+                          onTap: () {
+                            NavigationService.navigateToWithArgs(
+                              Routes.categorySearch,
+                              {"allCategories": true, "name": ""},
                             );
                           },
                         ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return loadingIndicatorCircle(
-                          context: context, color: AppColors.appColorEDBB43);
-                    } else {
-                      return SizedBox.shrink();
-                    }
-                  }),
-            ),
-            UIHelper.customDivider(),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Lista de comida",
-                    style: TextFontStyle.headline10StyleInter,
+                      ],
+                    ),
                   ),
-                  GestureDetector(
-                    child: Text("Ver todas",
-                        style: TextFontStyle.headline6StyleInter
-                            .copyWith(color: AppColors.appColorFF9500A)),
-                    onTap: () {
-                      NavigationService.navigateToWithArgs(
-                        Routes.categorySearch,
-                        {"allCategories": false, "name": "All Item"},
-                      );
-                    },
+                  SizedBox(
+                    height: 120,
+                    child: StreamBuilder(
+                        stream: getShopCategoriRXObj.getCategoryData,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            List catList =
+                                snapshot.data['data']['categories']['data'];
+                            return LiveList(
+                              showItemInterval: Duration(milliseconds: 100),
+                              showItemDuration: Duration(milliseconds: 300),
+                              reAnimateOnVisibility: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount:
+                                  catList.length > 9 ? 10 : catList.length,
+                              itemBuilder: animationItemBuilder(
+                                (index) {
+                                  return CategoryWidget(
+                                    item: catList[index],
+                                  );
+                                },
+                              ),
+                            );
+                          } else if (snapshot.hasError) {
+                            return SizedBox.shrink();
+                          } else {
+                            return SizedBox.shrink();
+                          }
+                        }),
                   ),
-                ],
-              ),
-            ),
-            StreamBuilder(
-                stream: getShopItemRXObj.getItemData,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    List catList = snapshot.data['data']['foods']['data'];
-                    return SizedBox(
-                      height: .3.sh,
-                      child: LiveList(
-                        showItemInterval: Duration(milliseconds: 100),
-                        showItemDuration: Duration(milliseconds: 300),
-                        reAnimateOnVisibility: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: catList!.length > 9 ? 10 : catList.length,
-                        itemBuilder: animationItemBuilder(
-                          (index) {
-                            return ItemWidget(
-                              item: catList[index],
+                  UIHelper.customDivider(),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Lista de comida".tr,
+                          style: TextFontStyle.headline10StyleInter,
+                        ),
+                        GestureDetector(
+                          child: Text("Ver todas".tr,
+                              style: TextFontStyle.headline6StyleInter
+                                  .copyWith(color: AppColors.appColorFF9500A)),
+                          onTap: () {
+                            NavigationService.navigateToWithArgs(
+                              Routes.categorySearch,
+                              {"allCategories": false, "name": "All Item"},
                             );
                           },
                         ),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    return SizedBox.shrink();
-                  }
-                  return loadingIndicatorCircle(context: context);
-                }),
-            UIHelper.verticalSpaceLarge,
-          ]),
-        ));
+                      ],
+                    ),
+                  ),
+                  StreamBuilder(
+                      stream: getShopItemRXObj.getItemData,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List catList = snapshot.data['data']['foods']['data'];
+                          return SizedBox(
+                            height: .3.sh,
+                            child: LiveList(
+                              showItemInterval: Duration(milliseconds: 100),
+                              showItemDuration: Duration(milliseconds: 300),
+                              reAnimateOnVisibility: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount:
+                                  catList!.length > 9 ? 10 : catList.length,
+                              itemBuilder: animationItemBuilder(
+                                (index) {
+                                  return ItemWidget(
+                                    item: catList[index],
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return SizedBox.shrink();
+                        }
+                        return SizedBox.shrink();
+                      }),
+                  UIHelper.verticalSpaceLarge,
+                ]),
+              ));
   }
 }

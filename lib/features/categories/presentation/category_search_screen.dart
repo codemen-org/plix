@@ -1,6 +1,7 @@
 import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:plix/features/categories/presentation/shimmer.dart';
 import 'package:plix/helpers/all_routes.dart';
 import 'package:plix/helpers/navigation_service.dart';
@@ -104,8 +105,10 @@ class _CategorySearchState extends State<CategorySearch> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: .05.sh,
         centerTitle: true,
-        title: widget.allCategories ? Text("Categories") : Text(widget.catname),
+        title:
+            widget.allCategories ? Text("Categories".tr) : Text(widget.catname),
       ),
       body: SingleChildScrollView(
         child: Column(children: [
@@ -118,7 +121,7 @@ class _CategorySearchState extends State<CategorySearch> {
                 decoration: InputDecoration(
                   hintStyle: TextFontStyle.headline7StyleInter
                       .copyWith(color: AppColors.appColor9B9B9B),
-                  hintText: "Search Product",
+                  hintText: "Search Product".tr,
                   prefixIcon:
                       Icon(Icons.search, color: AppColors.appColor9B9B9B),
                   border: OutlineInputBorder(

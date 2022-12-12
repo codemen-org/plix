@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../constants/app_color.dart';
@@ -25,7 +26,7 @@ class _InsertEmailScreenState extends State<InsertEmailScreen> {
     EmailProvider emailProvider =
         Provider.of<EmailProvider>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(title: Text("Forgot your password"), centerTitle: true),
+      appBar: AppBar(title: Text("Forgot your password".tr), centerTitle: true),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: .05.sw),
         child: Column(
@@ -34,7 +35,7 @@ class _InsertEmailScreenState extends State<InsertEmailScreen> {
             children: [
               UIHelper.verticalSpaceMedium,
               Text(
-                'Insert Your Email',
+                'Insert Your Email'.tr,
                 style: TextFontStyle.headline2StyleInter
                     .copyWith(color: AppColors.appColorF4A4A4A),
               ),
@@ -51,7 +52,7 @@ class _InsertEmailScreenState extends State<InsertEmailScreen> {
                           : AutovalidateMode.disabled,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Email Can\'t be empty';
+                          return 'Email Can\'t be empty'.tr;
                         }
                         return null;
                       },
@@ -65,10 +66,10 @@ class _InsertEmailScreenState extends State<InsertEmailScreen> {
                         color: AppColors.headLine2Color,
                       ),
                       decoration: InputDecoration(
-                        hintText: 'Enter your email',
+                        hintText: 'Enter your email'.tr,
                         hintStyle: TextFontStyle.headline5StyleInter
                             .copyWith(color: AppColors.appColor9B9B9B),
-                        labelText: 'Email',
+                        labelText: 'Email'.tr,
                         labelStyle: TextFontStyle.headline5StyleInter
                             .copyWith(color: AppColors.appColorF4A4A4A),
                         errorStyle: TextStyle(
@@ -86,7 +87,7 @@ class _InsertEmailScreenState extends State<InsertEmailScreen> {
               ),
               UIHelper.verticalSpaceMedium,
               customeButton(
-                name: 'Next',
+                name: 'Next'.tr,
                 height: .065.sh,
                 minWidth: double.infinity,
                 borderRadius: 5.r,
