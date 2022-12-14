@@ -64,8 +64,8 @@ class LocalNotificationService {
       final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       const NotificationDetails notificationDetails = NotificationDetails(
         android: AndroidNotificationDetails(
-          "dorsia",
-          "dorsiapushnotificationappchannel",
+          "plix",
+          "plixpushnotificationappchannel",
           importance: Importance.max,
           priority: Priority.high,
           color: Colors.black,
@@ -98,7 +98,15 @@ class LocalNotificationService {
 
   static Future<void> sendToken(String token) async {
     try {
-      // postDeviceTokenRXobj.postDeviceToken(token: token);
+      postDeviceTokenRXobj.postDeviceToken(token: token);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<void> removeToken() async {
+    try {
+      _firebaseMessaging.deleteToken();
     } catch (error) {
       rethrow;
     }

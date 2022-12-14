@@ -1,19 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
+
 import 'package:plix/constants/text_font_style.dart';
 import 'package:plix/helpers/ui_helpers.dart';
 import 'package:plix/helpers/all_routes.dart';
 import 'package:plix/helpers/navigation_service.dart';
 import 'package:plix/networks/api_acess.dart';
 import 'package:plix/widgets/loading_indicators.dart';
-import 'package:provider/provider.dart';
-
 import '../../constants/app_color.dart';
 import '../../constants/app_constants.dart';
 import '../../provider/order_date_time.dart';
@@ -31,6 +28,7 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> {
   String? selectdDate;
   DateSlot? dateSlot;
+  List? address;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -87,29 +85,43 @@ class _OrderScreenState extends State<OrderScreen> {
                         stream: getDefaultAddressRXObj.getDefaultAddressRes,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            List address = snapshot.data["data"]["addresses"];
-                            return ListTile(
-                              title: Text(
-                                address[0]['address_name'],
-                                style: TextFontStyle.headline5StyleInter
-                                    .copyWith(color: AppColors.appColor2C303E),
-                              ),
-                              tileColor: Colors.white,
-                              subtitle: Text(
-                                address[0]['address'],
-                                style: TextFontStyle.headline7StyleInter
-                                    .copyWith(color: AppColors.appColor67605F),
-                              ),
-                              trailing: Icon(
-                                Icons.arrow_forward_rounded,
-                                color: Colors.amberAccent[400],
-                              ),
-                              onTap: () {
-                                NavigationService.navigateTo(
-                                  Routes.profileScreen,
-                                );
-                              },
-                            );
+                            address = snapshot.data["data"]["addresses"];
+                            if (address!.length > 0)
+                              return ListTile(
+                                title: Text(
+                                  address![0]['address_name'],
+                                  style: TextFontStyle.headline5StyleInter
+                                      .copyWith(
+                                          color: AppColors.appColor2C303E),
+                                ),
+                                tileColor: Colors.white,
+                                subtitle: Text(
+                                  address![0]['address'],
+                                  style: TextFontStyle.headline7StyleInter
+                                      .copyWith(
+                                          color: AppColors.appColor67605F),
+                                ),
+                                trailing: Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: Colors.amberAccent[400],
+                                ),
+                                onTap: () {
+                                  NavigationService.navigateTo(
+                                    Routes.profileScreen,
+                                  );
+                                },
+                              );
+                            if (address!.length == 0)
+                              return Container(
+                                  height: .07.sh,
+                                  width: double.infinity,
+                                  color: Colors.white,
+                                  padding: EdgeInsets.all(20),
+                                  child: Text("No address found".tr,
+                                      style: TextFontStyle.headline5StyleInter
+                                          .copyWith(
+                                              color:
+                                                  AppColors.appColor2C303E)));
                           } else if (snapshot.hasError) {
                             return loadingIndicatorCircle(context: context);
                           }
@@ -406,6 +418,15 @@ class _OrderScreenState extends State<OrderScreen> {
                                 context.read<DateTimeProvider>().selectedDate;
                             DateSlot? slot =
                                 context.read<DateTimeProvider>().selectedSlot;
+                            if (address == null ||
+                                address!.isEmpty ||
+                                address!.length == 0) {
+                              ScaffoldMessenger.of(NavigationService.context)
+                                  .showSnackBar(SnackBar(
+                                content: Text("No delivery address found".tr),
+                              ));
+                              return;
+                            }
                             if (date != "" && slot != null) {
                               postCreateOrderRXObj.postCreateOrder(
                                   deliveryDate: date,

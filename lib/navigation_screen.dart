@@ -3,8 +3,13 @@ import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:plix/constants/app_color.dart';
 import 'package:plix/features/dashboard/presentation/home_screen.dart';
+import 'package:plix/helpers/all_routes.dart';
+import 'package:plix/helpers/navigation_service.dart';
+import 'package:plix/helpers/toast.dart';
 import 'package:plix/networks/api_acess.dart';
 
 import 'constants/app_constants.dart';
@@ -24,6 +29,7 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
+  final appdata = GetStorage();
   //Variable for navigation Index
   int _currentIndex = 0;
   //Variable for navigation Color Index
@@ -312,9 +318,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
         ],
         currentIndex: _currentIndex,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          if (appdata.read(kKeyIsLoggedIn) || index == 1 || index == 0) {
+            setState(() {
+              _currentIndex = index;
+            });
+          } else {
+            ToastUtil.showLongToast("You need to log in first");
+          }
         },
       ),
     );

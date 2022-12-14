@@ -1,9 +1,11 @@
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 
 class ToastUtil {
   static void showLongToast(String message) {
+    String trn = message.tr;
     Fluttertoast.showToast(
-      msg: message,
+      msg: trn,
       toastLength: Toast.LENGTH_LONG,
     );
   }

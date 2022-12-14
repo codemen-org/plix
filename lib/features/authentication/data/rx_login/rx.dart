@@ -53,9 +53,8 @@ class GetLoginRX {
       storage.write(kKeyRestaurantID, restaurantID);
 
       DioSingleton.instance.update(accesstoken);
-      //LocalNotificationService.getToken();
+      LocalNotificationService.getToken();
       NavigationService.goBack;
-
       NavigationService.popAndReplace(Routes.loadingScreen);
     } catch (e) {
       log(e.toString());

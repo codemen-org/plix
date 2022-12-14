@@ -121,6 +121,11 @@ class LocalString extends Translations {
           "Do you want to Remove your Account?": "Deseja remover sua conta?",
           "Old Password": "Senha Antiga",
           "New Password": "Nova Senha",
+          "You need to log in first": "Você precisa fazer o login primeiro",
+          "No delivery address found": "Nenhum endereço de entrega encontrado",
+          "No address found": "Nenhum endereço encontrado",
+          "Explore First": "Explorar primeiro",
+          "Or": "Ou",
         }
       };
 }

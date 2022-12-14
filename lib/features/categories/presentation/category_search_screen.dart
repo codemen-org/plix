@@ -158,8 +158,15 @@ class _CategorySearchState extends State<CategorySearch> {
                     shrinkWrap: true,
                     padding: EdgeInsets.only(bottom: 100),
                     itemCount: catList.length,
-                    separatorBuilder: (context, index) =>
-                        UIHelper.verticalSpaceSmall,
+                    separatorBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          UIHelper.verticalSpaceSmall,
+                          UIHelper.customDivider(),
+                          UIHelper.verticalSpaceSmall,
+                        ],
+                      );
+                    },
                     itemBuilder: animationItemBuilder(
                       (index) {
                         return InkWell(

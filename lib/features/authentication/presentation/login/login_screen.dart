@@ -221,6 +221,31 @@ class _LogeinScreenState extends State<LogeinScreen> {
                     },
                   ),
                   UIHelper.verticalSpaceSmall,
+                  Center(
+                    child: TextButton(
+                      child: Text(
+                        'Or'.tr,
+                        style: TextFontStyle.headline4StyleInter,
+                        textAlign: TextAlign.center,
+                      ),
+                      onPressed: () {},
+                    ),
+                  ),
+                  UIHelper.verticalSpaceSmall,
+                  customeButton(
+                    name: 'Explore First'.tr,
+                    height: .065.sh,
+                    minWidth: double.infinity,
+                    borderRadius: 5.r,
+                    color: AppColors.debitHigheColor,
+                    textStyle: TextFontStyle.headline4StyleInter,
+                    context: context,
+                    onCallBack: () async {
+                      NavigationService.navigateToReplacement(
+                          Routes.naviGationScreen);
+                    },
+                  ),
+                  UIHelper.verticalSpaceSmall,
                 ],
               ),
             ),

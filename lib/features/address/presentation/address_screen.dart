@@ -56,95 +56,112 @@ class _AddressScreenState extends State<AddressScreen> {
             isDefault = value['data']['is_default'] == 1 ? true : false;
             lastMapPosition = LatLng(double.parse(value['data']['latitude']),
                 double.parse(value['data']['longitude']));
-            addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
+            //  addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
           });
         }
       });
     } else {
-      addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
+      //addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
     }
   }
 
-  setPostionLatLang(LatLng latLng) {
-    lastMapPosition = latLng;
-    addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
-    mapController.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
-      target: lastMapPosition,
-      zoom: 14,
-    )));
-  }
+  // setPostionLatLang(LatLng latLng) {
+  //   lastMapPosition = latLng;
+  //   addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
+  //   mapController.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
+  //     target: lastMapPosition,
+  //     zoom: 14,
+  //   )));
+  // }
 
-  Set<Marker> createMarker(double lat, double long, String markerId) {
-    return {
-      Marker(
-          markerId: MarkerId(markerId),
-          position: LatLng(lat, long),
-          infoWindow: InfoWindow(title: markerId),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-          rotation: 0),
-    };
-  }
+  // Set<Marker> createMarker(double lat, double long, String markerId) {
+  //   return {
+  //     Marker(
+  //         markerId: MarkerId(markerId),
+  //         position: LatLng(lat, long),
+  //         infoWindow: InfoWindow(title: markerId),
+  //         icon:
+  //             BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+  //         rotation: 0),
+  //   };
+  // }
 
-  Future<void> onCameraMove(CameraPosition position) async {
-    lastMapPosition = position.target;
-  }
+  // Future<void> onCameraMove(CameraPosition position) async {
+  //   lastMapPosition = position.target;
+  // }
 
-  addMapMarker(double latitude, double longitude) {
-    mapMarkers.removeWhere((m) => m.markerId.value == "1");
-    Marker mapMarker = Marker(
-      draggable: true,
-      markerId: MarkerId("1"),
-      position: LatLng(latitude, longitude),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-    );
-    mapMarkers.add(mapMarker);
-    if (mounted) setState(() {});
-  }
+  // addMapMarker(double latitude, double longitude) {
+  //   mapMarkers.removeWhere((m) => m.markerId.value == "1");
+  //   Marker mapMarker = Marker(
+  //     draggable: true,
+  //     markerId: MarkerId("1"),
+  //     position: LatLng(latitude, longitude),
+  //     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+  //   );
+  //   mapMarkers.add(mapMarker);
+  //   if (mounted) setState(() {});
+  // }
 
-  Future<void> onCameraIdle() async {
-    placemarks = await placemarkFromCoordinates(
-        lastMapPosition.latitude, lastMapPosition.longitude);
-    addressController.text = placemarks!.first.street! +
-        ", " +
-        placemarks!.first.subLocality! +
-        ", " +
-        placemarks!.first.locality! +
-        ", " +
-        placemarks!.first.country!;
-    postalCodeController.text = placemarks!.first.postalCode!;
-    cidadeController.text = placemarks!.first.locality!;
-    estadoController.text = placemarks!.first.subAdministrativeArea!;
-    log(placemarks!.first.locality.toString() +
-        ", " +
-        placemarks!.first.name.toString() +
-        ", " +
-        placemarks!.first.country.toString() +
-        ", " +
-        placemarks!.first.postalCode.toString() +
-        ", " +
-        placemarks!.first.street.toString() +
-        ", " +
-        placemarks!.first.subAdministrativeArea.toString() +
-        ", " +
-        placemarks!.first.subLocality.toString());
-    // var addresses =
-    //     await Geocoder.local.findAddressesFromCoordinates(coordinates);
-    // final storage = GetStorage();
-    // var first = addresses.first;
-    // addressController.text = first.addressLine;
-    // postalCodeController.text = first.postalCode;
-    // cityController.text = first.locality;
-    // stateController.text = first.locality;
-    // countryController.text = first.countryName;
-    // lastNameController.text = storage.read(kKeyLastName);
-    // latitudeController.text = lastMapPosition.latitude.toString();
-    // longitudeController.text = lastMapPosition.longitude.toString();
-    //  addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
-  }
+  // Future<void> onCameraIdle() async {
+  //   placemarks = await placemarkFromCoordinates(
+  //       lastMapPosition.latitude, lastMapPosition.longitude);
+  //   addressController.text = placemarks!.first.street! +
+  //       ", " +
+  //       placemarks!.first.subLocality! +
+  //       ", " +
+  //       placemarks!.first.locality! +
+  //       ", " +
+  //       placemarks!.first.country!;
+  //   postalCodeController.text = placemarks!.first.postalCode!;
+  //   cidadeController.text = placemarks!.first.locality!;
+  //   estadoController.text = placemarks!.first.subAdministrativeArea!;
+  //   log(placemarks!.first.locality.toString() +
+  //       ", " +
+  //       placemarks!.first.name.toString() +
+  //       ", " +
+  //       placemarks!.first.country.toString() +
+  //       ", " +
+  //       placemarks!.first.postalCode.toString() +
+  //       ", " +
+  //       placemarks!.first.street.toString() +
+  //       ", " +
+  //       placemarks!.first.subAdministrativeArea.toString() +
+  //       ", " +
+  //       placemarks!.first.subLocality.toString());
+  //   // var addresses =
+  //   //     await Geocoder.local.findAddressesFromCoordinates(coordinates);
+  //   // final storage = GetStorage();
+  //   // var first = addresses.first;
+  //   // addressController.text = first.addressLine;
+  //   // postalCodeController.text = first.postalCode;
+  //   // cityController.text = first.locality;
+  //   // stateController.text = first.locality;
+  //   // countryController.text = first.countryName;
+  //   // lastNameController.text = storage.read(kKeyLastName);
+  //   // latitudeController.text = lastMapPosition.latitude.toString();
+  //   // longitudeController.text = lastMapPosition.longitude.toString();
+  //   //  addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
+  // }
 
-  @override
+  // @override
   void initState() {
+    if (widget.addressId != null) {
+      getAddressWithIdRXObj.getAddresWithIdRes.listen((value) {
+        if (mounted) {
+          setState(() {
+            addressNameController.text = value['data']['address_name'];
+            addressController.text = value['data']['address'];
+            postalCodeController.text = value['data']['postal_code'];
+            cidadeController.text = value['data']['city'];
+            estadoController.text = value['data']['state'];
+            isDefault = value['data']['is_default'] == 1 ? true : false;
+            lastMapPosition = LatLng(double.parse(value['data']['latitude']),
+                double.parse(value['data']['longitude']));
+            //  addMapMarker(lastMapPosition.latitude, lastMapPosition.longitude);
+          });
+        }
+      });
+    }
     super.initState();
   }
 
@@ -185,26 +202,26 @@ class _AddressScreenState extends State<AddressScreen> {
                 ),
               ]),
             ),
-            Container(
-              width: double.infinity,
-              height: 250.h,
-              child: GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: CameraPosition(
-                  target: lastMapPosition,
-                  zoom: 14,
-                ),
-                zoomControlsEnabled: true,
-                scrollGesturesEnabled: true,
-                onCameraIdle: onCameraIdle,
-                myLocationButtonEnabled: true,
-                myLocationEnabled: true,
-                onLongPress: setPostionLatLang,
-                onMapCreated: onMapCreated,
-                onCameraMove: onCameraMove,
-                markers: mapMarkers,
-              ),
-            ),
+            // Container(
+            //   width: double.infinity,
+            //   height: 250.h,
+            //   child: GoogleMap(
+            //     mapType: MapType.normal,
+            //     initialCameraPosition: CameraPosition(
+            //       target: lastMapPosition,
+            //       zoom: 14,
+            //     ),
+            //     zoomControlsEnabled: true,
+            //     scrollGesturesEnabled: true,
+            //     onCameraIdle: onCameraIdle,
+            //     myLocationButtonEnabled: true,
+            //     myLocationEnabled: true,
+            //     onLongPress: setPostionLatLang,
+            //     onMapCreated: onMapCreated,
+            //     onCameraMove: onCameraMove,
+            //     markers: mapMarkers,
+            //   ),
+            // ),
 
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 13.w),
@@ -303,7 +320,7 @@ class _AddressScreenState extends State<AddressScreen> {
                               return null;
                             },
                             controller: postalCodeController,
-                            keyboardType: TextInputType.name,
+                            keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               hintText: 'Número',
                               hintStyle: TextFontStyle.headline5StyleInter
@@ -367,7 +384,7 @@ class _AddressScreenState extends State<AddressScreen> {
                         return null;
                       },
                       controller: cidadeController,
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         hintText: 'Enter your Cidade',
                         hintStyle: TextFontStyle.headline5StyleInter
@@ -401,10 +418,12 @@ class _AddressScreenState extends State<AddressScreen> {
                               id: widget.addressId!,
                               address: addressController.text,
                               address_name: addressNameController.text,
-                              lat: lastMapPosition.latitude.toString(),
-                              long: lastMapPosition.longitude.toString(),
+                              lat:
+                                  "38.91406396830108", //lastMapPosition.latitude.toString(),
+                              long:
+                                  "-8.89133546501398", //lastMapPosition.longitude.toString(),
                               postal_code: postalCodeController.text,
-                              country: placemarks!.first.country!,
+                              country: "Portugal", //placemarks!.first.country!,
                               city: cidadeController.text,
                               state: estadoController.text,
                               is_default: isDefault ? 1 : 0,
@@ -413,19 +432,17 @@ class _AddressScreenState extends State<AddressScreen> {
                             postAddressRXObj.postNewAdderss(
                               address: addressController.text,
                               address_name: addressNameController.text,
-                              lat: lastMapPosition.latitude.toString(),
-                              long: lastMapPosition.longitude.toString(),
+                              lat:
+                                  "38.91406396830108", //lastMapPosition.latitude.toString(),
+                              long:
+                                  "-8.89133546501398", //lastMapPosition.longitude.toString(),
                               postal_code: postalCodeController.text,
-                              country: placemarks!.first.country!,
+                              country: "Portugal", //placemarks!.first.country!,
                               city: cidadeController.text,
                               state: estadoController.text,
                               is_default: isDefault ? 1 : 0,
                             );
                           }
-
-                          // setId();
-                          // await getLoginRXobj.login(
-                          //     emailController.text, passwordController.text);
                           setState(() {
                             validation = true;
                           });

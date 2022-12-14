@@ -8,8 +8,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:lottie/lottie.dart';
 import 'package:plix/features/product/model/add_one_list.dart';
+import 'package:plix/helpers/toast.dart';
 import 'package:plix/helpers/ui_helpers.dart';
 import 'package:plix/networks/api_acess.dart';
 import 'package:plix/provider/product_id_provider.dart';
@@ -28,6 +30,7 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  final appData = GetStorage();
   bool checkbox = false;
   String radioValue = "";
   bool validation = false;
@@ -162,7 +165,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       );
                                     } else if (snapshot.hasError) {
                                       return Text(
-                                        "0",
+                                        "",
                                         style: TextStyle(
                                           color: Colors.white,
                                         ),
@@ -411,19 +414,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ])),
                 InkWell(
                   onTap: () async {
-                    addOneList = [];
-                    selectedAddOns.addons.forEach(
-                      (element) {
-                        addOneList.add(element.id!);
-                      },
-                    );
-                    await postCartRXObj.postCartData(
-                        foodId.toString(),
-                        food_option_id.toString(),
-                        itemQty.toString(),
-                        noteController.text,
-                        addOneList);
-                    NavigationService.goBack;
+                    if (appData.read(kKeyIsLoggedIn)) {
+                      addOneList = [];
+                      selectedAddOns.addons.forEach(
+                        (element) {
+                          addOneList.add(element.id!);
+                        },
+                      );
+                      await postCartRXObj.postCartData(
+                          foodId.toString(),
+                          food_option_id.toString(),
+                          itemQty.toString(),
+                          noteController.text,
+                          addOneList);
+                      NavigationService.goBack;
+                    } else {
+                      ToastUtil.showLongToast("You need to log in first");
+                    }
                   },
                   child: Container(
                     height: .05.sh,

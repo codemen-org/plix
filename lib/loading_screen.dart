@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:plix/helpers/helper.dart';
 
+import 'helpers/notification_service.dart';
 import 'navigation_screen.dart';
 import 'networks/dio/dio.dart';
 
@@ -29,26 +30,19 @@ class _LoadingState extends State<Loading> {
   }
 
   loadInitialData() async {
+    await getSliderRXObj.fetchSlider();
+    await getShopCategoriRXObj.fetchShopCategoryData();
+    await getShopItemRXObj.fetchShopItemData();
     appData.writeIfNull(kKeyIsLoggedIn, false);
-
     if (appData.read(kKeyIsLoggedIn)) {
       String token = appData.read(kKeyAccessToken);
       DioSingleton.instance.update(token);
-      await getSliderRXObj.fetchSlider();
-      await getShopCategoriRXObj.fetchShopCategoryData();
-      await getShopItemRXObj.fetchShopItemData();
+      LocalNotificationService.getToken();
       await getCartRXObj.getCartData();
       await getAddressRXObj.getAddressData();
       await getDefaultAddressRXObj.getDefaultAddressData();
       await getProfileRXObj.fetchProfileData();
       await getOrderListRXObj.getOrderListData();
-//this should be called after shop api is called
-      // String restaurantId = appData.read(kKeyShopID) ?? '';
-      // if (restaurantId != '') {
-      //   LocalNotificationService.getToken();
-      // }
-
-      // await getProductShowRxobj.fetchProductShowData('293');
     }
     setState(() {
       _isLoading = false;

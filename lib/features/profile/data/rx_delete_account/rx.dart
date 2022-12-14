@@ -6,6 +6,7 @@ import 'package:rxdart/rxdart.dart';
 import '../../../../constants/app_constants.dart';
 import '../../../../helpers/all_routes.dart';
 import '../../../../helpers/navigation_service.dart';
+import '../../../../helpers/notification_service.dart';
 import '../../../../networks/api_acess.dart';
 import '../../../../widgets/loading_indicators.dart';
 import 'api.dart';
@@ -28,7 +29,8 @@ class DeleteAccountRX {
       _dataFetcher.sink.add(allData);
       storage.write(kKeyIsLoggedIn, false);
       storage.erase();
-      // LocalNotificationService.removeToken();
+      LocalNotificationService.removeToken();
+      deleteTokenRxObj.deleteTokenData();
       NavigationService.goBack;
       NavigationService.navigateTo(Routes.loadingScreen);
     } catch (e) {

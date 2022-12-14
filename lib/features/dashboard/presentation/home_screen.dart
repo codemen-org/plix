@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:plix/constants/app_color.dart';
 import 'package:plix/constants/text_font_style.dart';
 import 'package:plix/features/categories/presentation/category_search_screen.dart';
@@ -27,14 +28,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> slider = [];
   bool isloading = true;
-
+  final appData = GetStorage();
   final CarouselController _controller = CarouselController();
   //List<dynamic> slider = getSliderRXObj.getSliderData.value["data"]["sliders"];
   final TextEditingController languageTextController = TextEditingController();
 
   @override
   void initState() {
-    // TODO: implement initState
     getSliderRXObj.getSliderData.listen(
       (event) {
         setState(() {
@@ -53,24 +53,49 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           toolbarHeight: .06.sh,
           centerTitle: true,
-          title: Text(
-            "Plix",
-            style: TextFontStyle.headline1StyleArial
-                .copyWith(color: AppColors.appColorEDBB43),
+          title: Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            child: Text(
+              "Plix",
+              textScaleFactor: 2,
+              style: TextFontStyle.headline1StyleArial
+                  .copyWith(color: Colors.amber),
+            ),
           ),
-
           leading: Padding(
             padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
             child: Image.asset(AssetIcons.splash, height: 40.h, width: 40.w),
           ),
-          // actions: [
-          //   Padding(
-          //     padding: EdgeInsets.only(bottom: 10),
-          //     child: PopupWidget(
-          //       language: languageTextController,
-          //     ),
-          //   ),
-          // ],
+          actions: [
+            if (!appData.read(kKeyIsLoggedIn))
+              InkWell(
+                onTap: () {
+                  NavigationService.navigateToReplacement(Routes.logInScreen);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Log In",
+                        style: TextFontStyle.headline2StyleArial
+                            .copyWith(color: AppColors.appColorEDBB43),
+                      ),
+                      const Icon(
+                        Icons.login_rounded,
+                        color: AppColors.appColorEDBB43,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            // Padding(
+            //   padding: EdgeInsets.only(bottom: 10),
+            //   child: PopupWidget(
+            //     language: languageTextController,
+            //   ),
+            // ),
+          ],
         ),
         body: isloading
             ? loadingIndicatorCircle(context: context)
@@ -146,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ]),
                   ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: slider.asMap().entries.map((entry) {
@@ -169,6 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }).toList(),
                   ),
+                  UIHelper.customDivider(),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Row(

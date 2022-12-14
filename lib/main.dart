@@ -37,16 +37,15 @@ import 'features/profile/presentation/profle_screen.dart';
 Future<void> backgroundHandler(RemoteMessage message) async {}
 void main() async {
   diSetup();
-
   await GetStorage.init();
   DioSingleton.instance.create();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     systemNavigationBarColor: Colors.black,
     statusBarColor: AppColors.appColor4D3E39,
   ));
-  //await Firebase.initializeApp();
-  // FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-  // LocalNotificationService.initialize();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  LocalNotificationService.initialize();
   runApp(const MyApp());
 }
 
@@ -55,6 +54,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _rotation();
     setId();
     return MultiProvider(
       providers: [
@@ -88,9 +88,9 @@ class UtillScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storage = GetStorage();
-
     String language = storage.read(kKeyLanguage);
     String countryCode = storage.read(kKeyCountryCode);
+
     return ScreenUtilInit(
       designSize: const Size(1024, 768),
       minTextAdapt: true,
@@ -148,4 +148,11 @@ class UtillScreenMobile extends StatelessWidget {
       },
     );
   }
+}
+
+void _rotation() {
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 }

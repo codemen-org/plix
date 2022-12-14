@@ -98,6 +98,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       await deleteAddressWithIdRXObj
                                           .deleteAddressWithIData(
                                               address[index]['id']);
+                                      getDefaultAddressRXObj
+                                          .getDefaultAddressData();
                                     },
                                     child: Icon(
                                       Icons.delete,
@@ -206,6 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               NavigationService.goBack;
                             });
                           }),
+                      UIHelper.customDivider(),
                       InkWell(
                           child: action_widget(
                               title: "Email\n".tr,
@@ -496,7 +499,8 @@ Future<dynamic> show_confirmation(
               Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 0, left: 5.0, right: 5.0, top: 6.0),
+                  padding: const EdgeInsets.only(
+                      bottom: 0, left: 5.0, right: 5.0, top: 6.0),
                   child: Text(
                     resaon,
                     style: TextFontStyle.headline3StyleInter,

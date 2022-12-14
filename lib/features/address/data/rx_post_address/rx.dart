@@ -54,7 +54,7 @@ class PostAddressRX {
       if (resdata["success"] == false) throw Exception();
       await getAddressRXObj.getAddressData();
       NavigationService.goBack;
-      NavigationService.navigateTo(Routes.profileScreen);
+      NavigationService.navigateToReplacement(Routes.profileScreen);
     } catch (e) {
       log(e.toString());
       NavigationService.goBack;

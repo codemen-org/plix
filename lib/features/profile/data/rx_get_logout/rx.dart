@@ -1,6 +1,8 @@
 import 'package:get_storage/get_storage.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../../../helpers/notification_service.dart';
+import '../../../../networks/api_acess.dart';
 import '/constants/app_constants.dart';
 import '/helpers/all_routes.dart';
 import '/helpers/navigation_service.dart';
@@ -19,7 +21,8 @@ class GetLogOutRX {
       Map data = await api.fetchLogoutData();
       storage.write(kKeyIsLoggedIn, false);
       storage.erase();
-      // LocalNotificationService.removeToken();
+      LocalNotificationService.removeToken();
+      deleteTokenRxObj.deleteTokenData();
       _dataFetcher.sink.add(data);
       NavigationService.navigateTo(Routes.loadingScreen);
     } catch (e) {
